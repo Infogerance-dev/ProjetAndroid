@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Champ pour entrer le nom de l'aliment -->
+    <EditText
+        android:id="@+id/editFoodName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nom de l'aliment" />
+
+    <!-- Champ pour entrer les calories -->
+    <EditText
+        android:id="@+id/editFoodCalories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Calories" />
+
+</LinearLayout>

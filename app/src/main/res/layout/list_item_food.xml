@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:cardElevation="4dp"
+    android:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Image de l'aliment, centrée à gauche -->
+        <ImageView
+            android:id="@+id/imageFood"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_launcher_foreground"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="16dp" />
+
+        <!-- Nom et calories de l'aliment -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Nom de l'aliment -->
+            <TextView
+                android:id="@+id/textFoodName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nom de l'aliment"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="start" />
+
+            <!-- Quantité de calories -->
+            <TextView
+                android:id="@+id/textFoodCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100 kcal"
+                android:textSize="14sp"
+                android:layout_gravity="start"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
