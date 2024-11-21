@@ -1,101 +1,112 @@
-import android.app.AlertDialog
+package com.example.frigozen
+
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.frigozen.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
 
-    // Une liste mutable pour stocker les aliments
-    private val foodList = mutableListOf<FoodItem>()
     private lateinit var foodAdapter: FoodAdapter
+    private lateinit var foodList: MutableList<Food>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Configuration du RecyclerView
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewFood)
+        // Initialisation de la liste et de l'adaptateur
+        foodList = mutableListOf()
         foodAdapter = FoodAdapter(foodList)
+
+        // RecyclerView
+        val recyclerView: RecyclerView = findViewById<RecyclerView>(R.id.recyclerViewFood)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = foodAdapter
 
-        // Bouton "Ajouter"
-        val btnAddFood = findViewById<android.widget.Button>(R.id.btnAddFood)
+
+
+        // Bouton "Ajouter" pour ouvrir le dialogue
+        val btnAddFood: Button = findViewById(R.id.btnAddFood)
         btnAddFood.setOnClickListener {
             showAddFoodDialog()
         }
     }
 
-    // Fonction pour afficher la boîte de dialogue
     private fun showAddFoodDialog() {
-        // Charger la vue du dialogue
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_food, null)
+        // Création du dialogue pour ajouter un aliment
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_food, null)
+        val foodNameEditText: EditText = dialogView.findViewById(R.id.editFoodName)
+        val foodCaloriesEditText: EditText = dialogView.findViewById(R.id.editFoodCalories)
 
-        // Création du builder pour le dialogue
-        val dialogBuilder = AlertDialog.Builder(this)
-            .setView(dialogView)
+        // Affichage du dialogue
+        MaterialAlertDialogBuilder(this)
             .setTitle("Ajouter un aliment")
+            .setView(dialogView)
+            .setPositiveButton("Ajouter") { dialog, which ->
+                val name = foodNameEditText.text.toString()
+                val calories = foodCaloriesEditText.text.toString()
 
-        // Récupérer les champs de saisie dans le layout
-        val editFoodName = dialogView.findViewById<EditText>(R.id.editFoodName)
-        val editFoodCalories = dialogView.findViewById<EditText>(R.id.editFoodCalories)
-
-        // Ajouter des actions pour les boutons
-        dialogBuilder.setPositiveButton("Ajouter") { dialog, _ ->
-            val foodName = editFoodName.text.toString()
-            val foodCalories = editFoodCalories.text.toString().toIntOrNull()
-
-            // Vérification des champs
-            if (foodName.isNotBlank() && foodCalories != null) {
-                // Ajouter l'aliment à la liste
-                foodList.add(FoodItem(foodName, foodCalories))
-                foodAdapter.notifyDataSetChanged()
-                Toast.makeText(this, "$foodName ajouté avec succès !", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Veuillez remplir correctement les champs.", Toast.LENGTH_SHORT).show()
+                if (name.isNotEmpty() && calories.isNotEmpty()) {
+                    val food = Food(name, calories.toInt())
+                    foodList.add(food)
+                    foodAdapter.notifyItemInserted(foodList.size - 1)
+                    Toast.makeText(this, "Aliment ajouté", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show()
+                }
             }
-            dialog.dismiss()
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    // Classe FoodAdapter pour gérer l'affichage des aliments dans le RecyclerView
+    class FoodAdapter(private val foodList: MutableList<Food>) : RecyclerView.Adapter<FoodAdapter.FoodViewHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
+            // Inflate le layout de chaque item
+            val inflater = LayoutInflater.from(parent.context)
+            val binding = inflater.inflate(R.layout.list_item_food, parent, false)
+            return FoodViewHolder(binding)
         }
 
-        dialogBuilder.setNegativeButton("Annuler") { dialog, _ ->
-            dialog.dismiss()
+        override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
+            // Remplir les vues avec les données de l'aliment
+            val food = foodList[position]
+            holder.bind(food)
         }
 
-        // Afficher le dialogue
-        val dialog = dialogBuilder.create()
-        dialog.show()
-    }
-}
+        override fun getItemCount(): Int {
+            return foodList.size
+        }
 
-// Classe de données pour représenter un aliment
-data class FoodItem(val name: String, val calories: Int)
+        // ViewHolder pour chaque item dans la liste
+        class FoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            private val foodImage: ImageView = itemView.findViewById(R.id.foodImage)
+            private val foodName: TextView = itemView.findViewById(R.id.foodName)
+            private val foodCalories: TextView = itemView.findViewById(R.id.foodCalories)
 
-// Adaptateur pour le RecyclerView
-class FoodAdapter(private val items: List<FoodItem>) : RecyclerView.Adapter<FoodAdapter.FoodViewHolder>() {
-    override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): FoodViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.listealiments, parent, false)
-        return FoodViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
-        val item = items[position]
-        holder.bind(item)
-    }
-
-    override fun getItemCount() = items.size
-
-    class FoodViewHolder(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
-        private val foodName: android.widget.TextView = itemView.findViewById(R.id.textFoodName)
-        private val foodCalories: android.widget.TextView = itemView.findViewById(R.id.textFoodCalories)
-
-        fun bind(foodItem: FoodItem) {
-            foodName.text = foodItem.name
-            foodCalories.text = "${foodItem.calories} kcal"
+            fun bind(food: Food) {
+                // Associer les données de l'aliment aux vues
+                foodName.text = food.name
+                foodCalories.text = "${food.calories} kcal"
+                // Exemple d'image (vous pouvez personnaliser en fonction des besoins)
+                foodImage.setImageResource(R.drawable.ic_launcher_foreground)  // Assurez-vous d'avoir l'image dans res/drawable
+            }
         }
     }
+
+    // Classe Food représentant les aliments avec un nom et une quantité de calories
+    data class Food(
+        val name: String,
+        val calories: Int
+    )
 }
