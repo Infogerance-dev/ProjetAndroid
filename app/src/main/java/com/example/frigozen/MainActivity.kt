@@ -4,6 +4,10 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.frigozen.R
 import androidx.fragment.app.Fragment
+import com.example.frigozen.BilanNutritifFragment
+import com.example.frigozen.MesListesFragment
+import com.example.frigozen.MonCompteFragment
+import com.example.frigozen.NouvelleListeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {

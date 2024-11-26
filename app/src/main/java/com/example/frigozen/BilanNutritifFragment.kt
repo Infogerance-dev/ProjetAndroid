@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 class BilanNutritifFragment : Fragment(R.layout.fragment_bilan_nutritif) {
-    // TODO: Implémenter la logique pour l'écran "Mes Listes"
+    // TODO: Implémenter la logique pour l'écran "Bilan Nutritif"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO: Ajouter des éléments spécifiques à l'écran "Mes Listes"
+        // TODO: Ajouter des éléments spécifiques à l'écran "Bilan Nutritif"
     }
 }
