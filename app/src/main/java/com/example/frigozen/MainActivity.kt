@@ -1,41 +1,51 @@
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.example.frigozen.R
 import androidx.fragment.app.Fragment
 import com.example.frigozen.BilanNutritifFragment
 import com.example.frigozen.MesListesFragment
 import com.example.frigozen.MonCompteFragment
 import com.example.frigozen.NouvelleListeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.frigozen.R
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-
-        // Définir un listener pour gérer les clics
-        bottomNavigationView.setOnItemSelectedListener { item ->
-            val selectedFragment: Fragment = when (item.itemId) {
-                R.id.nav_meslistes -> MesListesFragment()
-                R.id.nav_nouvelleliste -> NouvelleListeFragment()
-                R.id.nav_bilannutritif -> BilanNutritifFragment()
-                R.id.nav_compte -> MonCompteFragment()
-                else -> BilanNutritifFragment()
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_meslistes -> {
+                    loadFragment(MesListesFragment())  // Remplacez par le fragment Home
+                    true
+                }
+                R.id.nav_nouvelleliste -> {
+                    loadFragment(NouvelleListeFragment())  // Remplacez par le fragment Search
+                    true
+                }
+                R.id.nav_compte -> {
+                    loadFragment(MonCompteFragment())  // Remplacez par le fragment Profile
+                    true
+                }
+                R.id.nav_bilannutritif -> {
+                    loadFragment(BilanNutritifFragment())  // Affiche le BilanNutritifFragment
+                    true
+                }
+                else -> false
             }
-
-            // Remplacer le fragment affiché
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.nav_host_fragment, selectedFragment)
-                .commit()
-
-            true
         }
 
-        // Définir le fragment par défaut
-        bottomNavigationView.selectedItemId = R.id.nav_bilannutritif
+        // Charger le fragment par défaut au démarrage
+        if (savedInstanceState == null) {
+            loadFragment(BilanNutritifFragment())  // Le fragment Home s'affichera au démarrage
+        }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.nav_host_fragment, fragment)
+        transaction.commit()
     }
 }
