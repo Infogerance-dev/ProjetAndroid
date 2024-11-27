@@ -11,4 +11,24 @@
         android:layout_height="wrap_content"
         android:text="Bienvenue à l'écran Nouvelle Liste !"
         android:textSize="18sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Bouton "+" en bas à droite -->
+        <Button
+            android:id="@+id/btnAddList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="54dp"
+            android:text="+"
+            android:textSize="30sp" />
+
+    </RelativeLayout>
+
+
 </LinearLayout>
