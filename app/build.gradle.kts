@@ -5,8 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.frigozen"
-    compileSdk = 34
-
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.example.frigozen"
         minSdk = 24
@@ -26,6 +25,8 @@ android {
             )
         }
     }
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -36,12 +37,13 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.material.v190)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.glide)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
