@@ -65,5 +65,4 @@ class BilanNutritifFragment : Fragment(R.layout.fragment_bilan_nutritif) {
             }
         }
     }
-
 }
