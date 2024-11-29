@@ -5,18 +5,19 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/NouvelleListe_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bienvenue à l'écran Nouvelle Liste !"
-        android:textSize="18sp" />
+    <!-- RecyclerView pour afficher la liste des aliments -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAliments"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp"/>
 
+    <!-- Bouton "+" en bas à droite -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <!-- Bouton "+" en bas à droite -->
         <Button
             android:id="@+id/btnAddList"
             android:layout_width="wrap_content"
@@ -24,11 +25,9 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="14dp"
-            android:layout_marginBottom="54dp"
+            android:layout_marginBottom="14dp"
             android:text="+"
             android:textSize="30sp" />
-
     </RelativeLayout>
-
-
 </LinearLayout>
+
