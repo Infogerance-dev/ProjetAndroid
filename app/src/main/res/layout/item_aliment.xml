@@ -25,12 +25,18 @@
         android:textSize="16sp"
         android:textColor="#000000" />
 
+    <!-- espace pour que le bouton ajouter soit positionne a droite -->
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
     <!-- Bouton pour ajouter à la liste -->
     <Button
         android:id="@+id/btnAddToList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ajouter"
+        android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
-        android:layout_gravity="center_vertical" />
+        android:text="Ajouter" />
 </LinearLayout>

@@ -1,6 +1,10 @@
 package com.example.frigozen
 
 import android.os.Bundle
+import android.text.InputType
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.frigozen.BilanNutritifFragment
@@ -24,7 +28,12 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_nouvelleliste -> {
-                    loadFragment(NouvelleListeFragment())  // Remplacez par le fragment Search
+                    // Charger le fragment NouvelleListeFragment
+                    loadFragment(NouvelleListeFragment())
+
+                    // Afficher la boîte de dialogue pour saisir le nom de la nouvelle liste
+                    showNewListDialog()
+
                     true
                 }
                 R.id.nav_compte -> {
@@ -51,5 +60,30 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
+    private fun showNewListDialog() {
+        // Créer un objet AlertDialog pour demander le nom de la nouvelle liste
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Nom de la nouvelle liste")
 
+        // Créer un EditText pour entrer le nom de la liste
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        builder.setPositiveButton("OK") { _, _ ->
+            val listName = input.text.toString()
+            if (listName.isNotEmpty()) {
+                // Utilisez le nom de la liste (par exemple, pour enregistrer la liste ou l'afficher)
+                Toast.makeText(this, "Nouvelle liste créée : $listName", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Le nom de la liste ne peut pas être vide", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        builder.setNegativeButton("Annuler") { dialog, _ ->
+            dialog.cancel()
+        }
+
+        builder.show()  // Affiche la boîte de dialogue
+    }
 }

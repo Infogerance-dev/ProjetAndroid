@@ -19,9 +19,10 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Exemple de liste d'aliments (remplacez par vos données réelles)
-        alimentsList = listOf(
+        // Liste d'aliment
+        val alimentsList = listOf(
             Aliment("Pomme", R.drawable.bilan_nutritif_icon),
+            Aliment("Melon", R.drawable.bilan_nutritif_icon),
             Aliment("Banane", R.drawable.bilan_nutritif_icon),
             Aliment("Carotte", R.drawable.bilan_nutritif_icon),
             Aliment("Tomate", R.drawable.bilan_nutritif_icon),
@@ -30,8 +31,29 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
             Aliment("Poulet", R.drawable.bilan_nutritif_icon),
             Aliment("Saumon", R.drawable.bilan_nutritif_icon),
             Aliment("Lait", R.drawable.bilan_nutritif_icon),
-            Aliment("Fromage", R.drawable.bilan_nutritif_icon)
+            Aliment("Fromage", R.drawable.bilan_nutritif_icon),
+            Aliment("Pain", R.drawable.bilan_nutritif_icon),
+            Aliment("Œuf", R.drawable.bilan_nutritif_icon),
+            Aliment("Avocat", R.drawable.bilan_nutritif_icon),
+            Aliment("Salade", R.drawable.bilan_nutritif_icon),
+            Aliment("Poivron", R.drawable.bilan_nutritif_icon),
+            Aliment("Courgette", R.drawable.bilan_nutritif_icon),
+            Aliment("Épinards", R.drawable.bilan_nutritif_icon),
+            Aliment("Chou-fleur", R.drawable.bilan_nutritif_icon),
+            Aliment("Pêche", R.drawable.bilan_nutritif_icon),
+            Aliment("Mûre", R.drawable.bilan_nutritif_icon),
+            Aliment("Mangue", R.drawable.bilan_nutritif_icon),
+            Aliment("Kiwi", R.drawable.bilan_nutritif_icon),
+            Aliment("Melon", R.drawable.bilan_nutritif_icon),
+            Aliment("Amandes", R.drawable.bilan_nutritif_icon),
+            Aliment("Noix de cajou", R.drawable.bilan_nutritif_icon),
+            Aliment("Yaourt", R.drawable.bilan_nutritif_icon),
+            Aliment("Tofu", R.drawable.bilan_nutritif_icon),
+            Aliment("Chocolat", R.drawable.bilan_nutritif_icon),
+            Aliment("Café", R.drawable.bilan_nutritif_icon),
+            Aliment("Thé", R.drawable.bilan_nutritif_icon)
         )
+
 
 
         // Initialisation de la RecyclerView
@@ -45,9 +67,9 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
 
 
 
-        // Bouton "+" en bas à droite
-        val btnAddList = view.findViewById<Button>(R.id.btnAddList)
-        btnAddList.setOnClickListener {
+        // Bouton "V" en bas à droite
+        val btnOkList = view.findViewById<Button>(R.id.btnOkList)
+        btnOkList.setOnClickListener {
             // Vous pouvez utiliser ce bouton pour une autre action (par exemple, finaliser la liste)
             showSelectedAliments()
         }

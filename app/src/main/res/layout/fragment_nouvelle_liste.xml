@@ -9,25 +9,27 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewAliments"
         android:layout_width="match_parent"
-        android:layout_height="194dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_weight="1" />
 
-    <!-- Bouton "+" en bas à droite -->
+
+
+    <!-- Bouton "Valider" en bas à droite -->
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="80dp">
+        android:layout_height="50dp">
 
         <Button
-            android:id="@+id/btnAddList"
+            android:id="@+id/btnOkList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="14dp"
-            android:layout_marginBottom="14dp"
-            android:text="+"
-            android:textSize="30sp" />
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="0dp"
+            android:text="Valider"
+            android:textSize="15sp" />
 
     </RelativeLayout>
 </LinearLayout>
