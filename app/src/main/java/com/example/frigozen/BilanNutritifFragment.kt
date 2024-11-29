@@ -13,12 +13,16 @@ class BilanNutritifFragment : Fragment(R.layout.fragment_bilan_nutritif) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Récupérer les vues de l'interface utilisateur
+        // Récupérer les vues
         val etPoids: EditText = view.findViewById(R.id.etPoids)
         val etTaille: EditText = view.findViewById(R.id.etTaille)
         val btnCalculer: Button = view.findViewById(R.id.btnCalculer)
         val tvIMC: TextView = view.findViewById(R.id.tvIMC)
         val tvCalories: TextView = view.findViewById(R.id.tvCalories)
+
+        // Définir l'état initial
+        tvIMC.visibility = View.GONE
+        tvCalories.visibility = View.GONE
 
         btnCalculer.setOnClickListener {
             val poids = etPoids.text.toString().toFloatOrNull()
@@ -27,12 +31,11 @@ class BilanNutritifFragment : Fragment(R.layout.fragment_bilan_nutritif) {
             if (poids != null && taille != null) {
                 // Calculer l'IMC
                 val imc = poids / (taille * taille)
-                tvIMC.text = "IMC: %.2f".format(imc)
 
-                // Initialiser les calories de base
+                // Calculer les calories de base
                 var calories = poids * 23
 
-                // Afficher le popup pour sélectionner le niveau d'activité
+                // Afficher le popup pour demander le niveau d'activité
                 val options = arrayOf("Sédentaire", "Modérément actif", "Très actif")
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Niveau d'activité")
@@ -52,17 +55,28 @@ class BilanNutritifFragment : Fragment(R.layout.fragment_bilan_nutritif) {
                         calories -= 400
                     }
 
-                    // Mettre à jour le TextView des calories
+                    // Remplacer les champs de saisie par les résultats
+                    etPoids.visibility = View.GONE
+                    etTaille.visibility = View.GONE
+                    btnCalculer.visibility = View.GONE
+
+                    tvIMC.visibility = View.VISIBLE
+                    tvCalories.visibility = View.VISIBLE
+
+                    // Mettre à jour les TextViews
+                    tvIMC.text = "IMC: %.2f".format(imc)
                     tvCalories.text = "Calories recommandées: %.0f".format(calories)
                 }
 
                 // Afficher le popup
                 builder.show()
             } else {
-                // Gérer les cas d'erreur d'entrée
+                // Gérer les cas d'erreur
+                tvIMC.visibility = View.VISIBLE
                 tvIMC.text = "Veuillez entrer un poids et une taille valides."
-                tvCalories.text = ""
+                tvCalories.visibility = View.GONE
             }
         }
     }
+
 }
