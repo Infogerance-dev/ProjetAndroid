@@ -73,8 +73,19 @@ class MainActivity : AppCompatActivity() {
         builder.setPositiveButton("OK") { _, _ ->
             val listName = input.text.toString()
             if (listName.isNotEmpty()) {
+                // Passer le nom de la liste au fragment NouvelleListeFragment
+                val fragment = NouvelleListeFragment()
+                val bundle = Bundle()
+                bundle.putString("listName", listName)
+                fragment.arguments = bundle
+
+
                 // Utilisez le nom de la liste (par exemple, pour enregistrer la liste ou l'afficher)
                 Toast.makeText(this, "Nouvelle liste créée : $listName", Toast.LENGTH_SHORT).show()
+
+                // Charger le fragment NouvelleListeFragment
+                loadFragment(fragment)
+
             } else {
                 Toast.makeText(this, "Le nom de la liste ne peut pas être vide", Toast.LENGTH_SHORT).show()
             }
