@@ -12,6 +12,7 @@
         android:layout_height="80dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="Image de l'aliment"
+        android:icon="@drawable/bilan_nutritif_icon"
         android:scaleType="centerCrop" />
 
     <!-- Nom de l'aliment -->

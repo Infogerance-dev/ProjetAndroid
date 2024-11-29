@@ -20,9 +20,19 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         super.onViewCreated(view, savedInstanceState)
 
         // Exemple de liste d'aliments (remplacez par vos données réelles)
-        alimentsList = List(50) { index ->
-            Aliment("Aliment ${index + 1}", "https://example.com/images/food_${index + 1}.jpg")
-        }
+        alimentsList = listOf(
+            Aliment("Pomme", R.drawable.bilan_nutritif_icon),
+            Aliment("Banane", R.drawable.bilan_nutritif_icon),
+            Aliment("Carotte", R.drawable.bilan_nutritif_icon),
+            Aliment("Tomate", R.drawable.bilan_nutritif_icon),
+            Aliment("Brocoli", R.drawable.bilan_nutritif_icon),
+            Aliment("Riz", R.drawable.bilan_nutritif_icon),
+            Aliment("Poulet", R.drawable.bilan_nutritif_icon),
+            Aliment("Saumon", R.drawable.bilan_nutritif_icon),
+            Aliment("Lait", R.drawable.bilan_nutritif_icon),
+            Aliment("Fromage", R.drawable.bilan_nutritif_icon)
+        )
+
 
         // Initialisation de la RecyclerView
         recyclerView = view.findViewById(R.id.recyclerViewAliments)
@@ -32,6 +42,8 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
             selectedAliments.add(aliment)
             Toast.makeText(requireContext(), "${aliment.name} ajouté à la liste!", Toast.LENGTH_SHORT).show()
         }
+
+
 
         // Bouton "+" en bas à droite
         val btnAddList = view.findViewById<Button>(R.id.btnAddList)

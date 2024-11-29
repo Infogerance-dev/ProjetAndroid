@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-data class Aliment(val name: String, val imageUrl: String)
+data class Aliment(val name: String, val imageResourceId: Int) // Utilisez un ID de ressource drawable
 
 class AlimentsAdapter(
     private val aliments: List<Aliment>,
@@ -34,8 +34,8 @@ class AlimentsAdapter(
         private val btnAddToList: Button = view.findViewById(R.id.btnAddToList)
 
         fun bind(aliment: Aliment) {
-            // Charger l'image avec Picasso
-            Glide.with(ivAliment.context).load(aliment.imageUrl)  // Charge l'image à partir de l'URL.into(ivAliment)  // Remplissez l'ImageView avec l'image
+            // Charger l'image
+            ivAliment.setImageResource(aliment.imageResourceId)  // Charge l'image vectorielle
 
             // Afficher le nom de l'aliment
             tvAlimentName.text = aliment.name

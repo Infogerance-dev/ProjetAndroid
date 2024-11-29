@@ -50,4 +50,6 @@ class MainActivity : AppCompatActivity() {
         transaction.replace(R.id.nav_host_fragment, fragment)
         transaction.commit()
     }
+
+
 }
