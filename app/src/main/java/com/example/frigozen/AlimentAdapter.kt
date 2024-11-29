@@ -35,7 +35,7 @@ class AlimentsAdapter(
 
         fun bind(aliment: Aliment) {
             // Charger l'image
-            ivAliment.setImageResource(aliment.imageResourceId)  // Charge l'image vectorielle
+            ivAliment.setImageResource(aliment.imageResourceId)
 
             // Afficher le nom de l'aliment
             tvAlimentName.text = aliment.name
