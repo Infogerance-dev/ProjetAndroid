@@ -5,81 +5,78 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 
 class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var alimentsList: List<Aliment>
-    private val selectedAliments = mutableListOf<Aliment>()
-    private var listName: String? = null  // Variable pour stocker le nom de la liste
+    private lateinit var adapter: AlimentsAdapter
+    private var isShowingCategories = true
+    private var currentCategory: String? = null
 
+    private val alimentsList = listOf(
+        Aliment("Pomme", R.drawable.bilan_nutritif_icon, "Fruits"),
+        Aliment("Banane", R.drawable.bilan_nutritif_icon, "Fruits"),
+        Aliment("Carotte", R.drawable.bilan_nutritif_icon, "Légumes"),
+        Aliment("Tomate", R.drawable.bilan_nutritif_icon, "Légumes"),
+        Aliment("Poulet", R.drawable.bilan_nutritif_icon, "Viandes")
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Récupérer le nom de la liste à partir des arguments
-        listName = arguments?.getString("listName")
-
-        // Liste d'aliment
-        val alimentsList = listOf(
-            Aliment("Pomme", R.drawable.bilan_nutritif_icon, "Fruits"),
-            Aliment("Melon", R.drawable.bilan_nutritif_icon, "Fruits"),
-            Aliment("Banane", R.drawable.bilan_nutritif_icon, "Fruits"),
-            Aliment("Carotte", R.drawable.bilan_nutritif_icon, "Légumes"),
-            Aliment("Tomate", R.drawable.bilan_nutritif_icon, "Légumes"),
-            Aliment("Poulet", R.drawable.bilan_nutritif_icon, "Viandes"),
-            Aliment("Saumon", R.drawable.bilan_nutritif_icon, "Poissons"),
-            // Ajoutez d'autres aliments avec leur catégorie
-        )
-
         // Grouper les aliments par catégorie
-        val groupedAliments = alimentsList.groupBy { it.category }
+        val categories = alimentsList.map { it.category }.distinct()
 
-        // Créer une liste mixte contenant des catégories et des aliments
-        val items = mutableListOf<ListItem>()
-        groupedAliments.forEach { (category, aliments) ->
-            items.add(ListItem.Category(category)) // Ajoute l'en-tête de la catégorie
-            items.addAll(aliments.map { ListItem.AlimentItem(it) }) // Ajoute les aliments sous la catégorie
-        }
-
-
-
-        // Initialisation de la RecyclerView avec la liste mixte (catégories + aliments)
+        // Configuration RecyclerView
         recyclerView = view.findViewById(R.id.recyclerViewAliments)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = AlimentsAdapter(items) { aliment ->
-            selectedAliments.add(aliment)
-            Toast.makeText(requireContext(), "${aliment.name} ajouté à la liste!", Toast.LENGTH_SHORT).show()
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        )
+
+        // Adapter initial
+        adapter = AlimentsAdapter(emptyList()) { item ->
+            if (isShowingCategories) {
+                // Passer à l'affichage des aliments
+                currentCategory = item as String
+                updateRecyclerViewForCategory(item)
+            } else {
+                // Action sur un aliment sélectionné
+                val aliment = item as Aliment
+                Toast.makeText(requireContext(), "${aliment.name} sélectionné.", Toast.LENGTH_SHORT).show()
+            }
         }
+        recyclerView.adapter = adapter
 
+        // Afficher uniquement les catégories au départ
+        updateRecyclerViewForCategories(categories)
 
-
-
-
-        // Bouton "V" en bas à droite
-        val btnOkList = view.findViewById<Button>(R.id.btnOkList)
-        btnOkList.setOnClickListener {
-            // Vous pouvez utiliser ce bouton pour une autre action (par exemple, finaliser la liste)
-            showSelectedAliments()
+        // Bouton de retour
+        view.findViewById<Button>(R.id.btnOkList).apply {
+            text = "Retour"
+            visibility = View.GONE
+            setOnClickListener {
+                updateRecyclerViewForCategories(categories)
+                isShowingCategories = true
+                visibility = View.GONE
+            }
         }
     }
 
-    private fun showSelectedAliments() {
-        // Vérifier si des aliments ont été sélectionnés
-        if (selectedAliments.isEmpty()) {
-            Toast.makeText(requireContext(), "Aucun aliment sélectionné.", Toast.LENGTH_SHORT).show()
-            return
-        }
+    private fun updateRecyclerViewForCategories(categories: List<String>) {
+        adapter.updateItems(categories)
+        isShowingCategories = true
+        recyclerView.adapter = adapter
+    }
 
-        // Afficher les aliments sélectionnés dans un Toast
-        val selectedNames = selectedAliments.joinToString(", ") { it.name }
-        Toast.makeText(requireContext(), "Aliments ajoutés à $listName : $selectedNames", Toast.LENGTH_LONG).show()
-
-        // Vous pouvez maintenant naviguer vers une autre vue ou effectuer d'autres actions avec la liste des aliments sélectionnés
-        // Par exemple, enregistrer la liste ou la passer à une autre activité/fragment
+    private fun updateRecyclerViewForCategory(category: String) {
+        val alimentsInCategory = alimentsList.filter { it.category == category }
+        adapter.updateItems(alimentsInCategory)
+        isShowingCategories = false
+        view?.findViewById<Button>(R.id.btnOkList)?.visibility = View.VISIBLE
     }
 }
 
