@@ -1,9 +1,11 @@
+package com.example.frigozen
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.frigozen.BilanNutritifFragment
 import com.example.frigozen.MesListesFragment
-import com.example.frigozen.MonCompteFragment
+import com.example.frigozen.AccountCreationFragment
 import com.example.frigozen.NouvelleListeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.frigozen.R
@@ -26,7 +28,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_compte -> {
-                    loadFragment(MonCompteFragment())  // Remplacez par le fragment Profile
+                    loadFragment(AccountCreationFragment())  // Remplacez par le fragment Profile
                     true
                 }
                 R.id.nav_bilannutritif -> {
@@ -39,7 +41,9 @@ class MainActivity : AppCompatActivity() {
 
         // Charger le fragment par défaut au démarrage
         if (savedInstanceState == null) {
-            loadFragment(BilanNutritifFragment())  // Le fragment Home s'affichera au démarrage
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, AccountCreationFragment())
+                .commit()
         }
     }
 
