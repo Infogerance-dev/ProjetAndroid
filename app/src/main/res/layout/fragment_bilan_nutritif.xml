@@ -2,17 +2,20 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/app_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
         <EditText
             android:id="@+id/etPoids"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
             android:hint="Entrez votre poids (kg)"
             android:inputType="numberDecimal" />
 
@@ -20,6 +23,7 @@
             android:id="@+id/etTaille"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
             android:hint="Entrez votre taille (m)"
             android:inputType="numberDecimal" />
 
@@ -27,13 +31,15 @@
             android:id="@+id/btnCalculer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Calculer" />
+            android:text="Calculer"
+            android:backgroundTint="@color/Button"/>
 
         <TextView
             android:id="@+id/tvIMC"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="IMC : "
+            android:layout_marginBottom="16dp"
             android:textSize="18sp"
             android:visibility="gone" />
 
@@ -41,6 +47,7 @@
             android:id="@+id/tvCalories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:text="Calories recommandées : "
             android:textSize="18sp"
             android:visibility="gone" />
