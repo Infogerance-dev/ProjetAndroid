@@ -51,5 +51,50 @@
             android:text="Calories recommandées : "
             android:textSize="18sp"
             android:visibility="gone" />
+
+
+        <!-- Barre de progression avec label et bouton -->
+        <RelativeLayout
+            android:id="@+id/groupResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <!-- Label -->
+
+            <TextView
+                android:id="@+id/tvCaloriesConsommeesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/progressBarCalories"
+                android:layout_marginEnd="8dp"
+                android:textStyle="italic"
+                android:text="Calories consommées :" />
+
+            <!-- ProgressBar -->
+
+            <Button
+                android:id="@+id/btnCaloriesAction"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_alignRight="@id/progressBarCalories"
+                android:backgroundTint="@color/Button"
+                android:text="+" />
+
+            <ProgressBar
+                android:id="@+id/progressBarCalories"
+                style="R.style.Widget_ProgressBar_Horizontal"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:max="100"
+                android:progress="25" />
+
+
+            <!-- Bouton -->
+        </RelativeLayout>
+
     </LinearLayout>
 </ScrollView>

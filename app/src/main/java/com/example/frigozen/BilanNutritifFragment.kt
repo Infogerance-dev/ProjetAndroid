@@ -2,81 +2,73 @@ package com.example.frigozen
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import androidx.fragment.app.Fragment
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 
 class BilanNutritifFragment : Fragment(R.layout.fragment_bilan_nutritif) {
+
+    private var maxCalories = 0 // Stocke le nombre de calories recommandées
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Récupérer les vues
         val etPoids: EditText = view.findViewById(R.id.etPoids)
         val etTaille: EditText = view.findViewById(R.id.etTaille)
         val btnCalculer: Button = view.findViewById(R.id.btnCalculer)
         val tvIMC: TextView = view.findViewById(R.id.tvIMC)
         val tvCalories: TextView = view.findViewById(R.id.tvCalories)
+        val progressBar: ProgressBar = view.findViewById(R.id.progressBarCalories)
+        val btnCaloriesAction: Button = view.findViewById(R.id.btnCaloriesAction)
+        val groupResult: LinearLayout = view.findViewById(R.id.groupResult) // Conteneur des résultats
 
-        // Définir l'état initial
-        tvIMC.visibility = View.GONE
-        tvCalories.visibility = View.GONE
+        // Cache les résultats au départ
+        groupResult.visibility = View.GONE
 
         btnCalculer.setOnClickListener {
             val poids = etPoids.text.toString().toFloatOrNull()
             val taille = etTaille.text.toString().toFloatOrNull()
 
             if (poids != null && taille != null) {
-                // Calculer l'IMC
                 val imc = poids / (taille * taille)
+                tvIMC.text = "IMC: %.2f".format(imc)
 
-                // Calculer les calories de base
                 var calories = poids * 23
 
-                // Afficher le popup pour demander le niveau d'activité
+                // Popup pour le niveau d'activité
                 val options = arrayOf("Sédentaire", "Modérément actif", "Très actif")
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Niveau d'activité")
                 builder.setItems(options) { _, which ->
-                    // Appliquer le facteur d'activité
                     val facteur = when (which) {
                         0 -> 1.2f
                         1 -> 1.5f
                         else -> 1.8f
                     }
                     calories *= facteur
+                    if (imc < 18.5) calories += 400 else if (imc > 25) calories -= 400
 
-                    // Ajuster les calories en fonction de l'IMC
-                    if (imc < 18.5) {
-                        calories += 400
-                    } else if (imc > 25) {
-                        calories -= 400
-                    }
+                    // Mise à jour des calories recommandées
+                    maxCalories = calories.toInt()
+                    tvCalories.text = "Calories recommandées: $maxCalories"
 
-                    // Remplacer les champs de saisie par les résultats
-                    etPoids.visibility = View.GONE
-                    etTaille.visibility = View.GONE
-                    btnCalculer.visibility = View.GONE
+                    // Configurer le maximum de la ProgressBar
+                    progressBar.max = maxCalories
+                    progressBar.progress = 0
 
-                    tvIMC.visibility = View.VISIBLE
-                    tvCalories.visibility = View.VISIBLE
-
-                    // Mettre à jour les TextViews
-                    tvIMC.text = "IMC: %.2f".format(imc)
-                    tvCalories.text = "Calories recommandées: %.0f".format(calories)
+                    // Afficher les résultats
+                    groupResult.visibility = View.VISIBLE
                 }
-
-                // Afficher le popup
                 builder.show()
             } else {
-                // Gérer les cas d'erreur
-                tvIMC.visibility = View.VISIBLE
-                tvIMC.text = "Veuillez entrer un poids et une taille valides."
-                tvCalories.visibility = View.GONE
+                Toast.makeText(requireContext(), "Veuillez entrer un poids et une taille valides.", Toast.LENGTH_SHORT).show()
+                groupResult.visibility = View.GONE
             }
         }
-    }
 
+        // Bouton pour ouvrir "Mes listes" (fonctionnalité à venir)
+        btnCaloriesAction.setOnClickListener {
+            Toast.makeText(requireContext(), "Ouvrir 'Mes listes' pour ajouter des aliments.", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
