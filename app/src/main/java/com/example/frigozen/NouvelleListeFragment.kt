@@ -50,7 +50,7 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         // Initialisation de la RecyclerView avec la liste mixte (catégories + aliments)
         recyclerView = view.findViewById(R.id.recyclerViewAliments)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = AlimentsAdapter(items) { aliment ->
+        recyclerView.adapter = AlimentAdapter(items) { aliment ->
             selectedAliments.add(aliment)
             Toast.makeText(requireContext(), "${aliment.name} ajouté à la liste!", Toast.LENGTH_SHORT).show()
         }
@@ -59,7 +59,7 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
 
 
 
-        // Bouton "V" en bas à droite
+        // Bouton "V" en bas à droite clicker
         val btnOkList = view.findViewById<Button>(R.id.btnOkList)
         btnOkList.setOnClickListener {
             // Vous pouvez utiliser ce bouton pour une autre action (par exemple, finaliser la liste)
@@ -77,6 +77,8 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         // Afficher les aliments sélectionnés dans un Toast
         val selectedNames = selectedAliments.joinToString(", ") { it.name }
         Toast.makeText(requireContext(), "Aliments ajoutés à $listName : $selectedNames", Toast.LENGTH_LONG).show()
+        (activity as MainActivity).loadFragment(MesListesFragment()) // Appelle la méthode loadFragment de MainActivity pour changer de vue une fois que le bouton valider est selectionne
+
 
         // Vous pouvez maintenant naviguer vers une autre vue ou effectuer d'autres actions avec la liste des aliments sélectionnés
         // Par exemple, enregistrer la liste ou la passer à une autre activité/fragment

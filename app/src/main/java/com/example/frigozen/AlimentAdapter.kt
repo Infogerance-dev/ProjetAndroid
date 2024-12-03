@@ -8,9 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-data class Aliment(val name: String, val imageResourceId: Int, val category: String) // Utilisez un ID de ressource drawable
 
-class AlimentsAdapter(
+class AlimentAdapter(
     private val items: List<ListItem>,
     private val onAddToListClick: (Aliment) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -19,8 +18,10 @@ class AlimentsAdapter(
         return when (items[position]) {
             is ListItem.Category -> 0
             is ListItem.AlimentItem -> 1
+            else -> throw IllegalArgumentException("Type inconnu à la position $position")
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 0) { // Catégorie
@@ -36,8 +37,10 @@ class AlimentsAdapter(
         when (val item = items[position]) {
             is ListItem.Category -> (holder as CategoryViewHolder).bind(item.name)
             is ListItem.AlimentItem -> (holder as AlimentViewHolder).bind(item.aliment)
+            else -> throw IllegalArgumentException("Type de vue inconnu à la position $position")
         }
     }
+
 
     override fun getItemCount(): Int = items.size
 
@@ -55,7 +58,7 @@ class AlimentsAdapter(
         private val btnAddToList: Button = view.findViewById(R.id.btnAddToList)
 
         fun bind(aliment: Aliment) {
-            ivAliment.setImageResource(aliment.imageResourceId)
+            ivAliment.setImageResource(aliment.imageResId)
             tvAlimentName.text = aliment.name
             btnAddToList.setOnClickListener {
                 onAddToListClick(aliment)
