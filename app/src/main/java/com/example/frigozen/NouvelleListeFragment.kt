@@ -1,6 +1,7 @@
 package com.example.frigozen
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -23,17 +24,64 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         // Récupérer le nom de la liste à partir des arguments
         listName = arguments?.getString("listName")
 
-        // Liste d'aliment
         val alimentsList = listOf(
             Aliment("Pomme", R.drawable.bilan_nutritif_icon, "Fruits"),
             Aliment("Melon", R.drawable.bilan_nutritif_icon, "Fruits"),
             Aliment("Banane", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Poire", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Orange", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Fraise", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Raisin", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Abricot", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Pêche", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Ananas", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Kiwi", R.drawable.bilan_nutritif_icon, "Fruits"),
+            Aliment("Mangue", R.drawable.bilan_nutritif_icon, "Fruits"),
             Aliment("Carotte", R.drawable.bilan_nutritif_icon, "Légumes"),
             Aliment("Tomate", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Courgette", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Brocoli", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Épinard", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Poivron", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Chou-fleur", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Concombre", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Laitue", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Oignon", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Ail", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Haricot vert", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Chou de Bruxelles", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Céleri", R.drawable.bilan_nutritif_icon, "Légumes"),
             Aliment("Poulet", R.drawable.bilan_nutritif_icon, "Viandes"),
+            Aliment("Boeuf", R.drawable.bilan_nutritif_icon, "Viandes"),
+            Aliment("Porc", R.drawable.bilan_nutritif_icon, "Viandes"),
+            Aliment("Agneau", R.drawable.bilan_nutritif_icon, "Viandes"),
+            Aliment("Dinde", R.drawable.bilan_nutritif_icon, "Viandes"),
+            Aliment("Canard", R.drawable.bilan_nutritif_icon, "Viandes"),
             Aliment("Saumon", R.drawable.bilan_nutritif_icon, "Poissons"),
-            // Ajoutez d'autres aliments avec leur catégorie
+            Aliment("Thon", R.drawable.bilan_nutritif_icon, "Poissons"),
+            Aliment("Maquereau", R.drawable.bilan_nutritif_icon, "Poissons"),
+            Aliment("Truite", R.drawable.bilan_nutritif_icon, "Poissons"),
+            Aliment("Morue", R.drawable.bilan_nutritif_icon, "Poissons"),
+            Aliment("Sardine", R.drawable.bilan_nutritif_icon, "Poissons"),
+            Aliment("Crevette", R.drawable.bilan_nutritif_icon, "Poissons"),
+            Aliment("Homard", R.drawable.bilan_nutritif_icon, "Poissons"),
+            Aliment("Crabe", R.drawable.bilan_nutritif_icon, "Poissons"),
+            Aliment("Tofu", R.drawable.bilan_nutritif_icon, "Protéines végétales"),
+            Aliment("Tempeh", R.drawable.bilan_nutritif_icon, "Protéines végétales"),
+            Aliment("Lentilles", R.drawable.bilan_nutritif_icon, "Légumineuses"),
+            Aliment("Pois chiches", R.drawable.bilan_nutritif_icon, "Légumineuses"),
+            Aliment("Haricots rouges", R.drawable.bilan_nutritif_icon, "Légumineuses"),
+            Aliment("Edamame", R.drawable.bilan_nutritif_icon, "Légumineuses"),
+            Aliment("Chia", R.drawable.bilan_nutritif_icon, "Graines"),
+            Aliment("Lin", R.drawable.bilan_nutritif_icon, "Graines"),
+            Aliment("Tournesol", R.drawable.bilan_nutritif_icon, "Graines"),
+            Aliment("Courge", R.drawable.bilan_nutritif_icon, "Légumes"),
+            Aliment("Amandes", R.drawable.bilan_nutritif_icon, "Fruits secs"),
+            Aliment("Noix", R.drawable.bilan_nutritif_icon, "Fruits secs"),
+            Aliment("Pistaches", R.drawable.bilan_nutritif_icon, "Fruits secs"),
+            Aliment("Noisettes", R.drawable.bilan_nutritif_icon, "Fruits secs")
         )
+
 
         // Grouper les aliments par catégorie
         val groupedAliments = alimentsList.groupBy { it.category }
@@ -77,7 +125,10 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         // Afficher les aliments sélectionnés dans un Toast
         val selectedNames = selectedAliments.joinToString(", ") { it.name }
         Toast.makeText(requireContext(), "Aliments ajoutés à $listName : $selectedNames", Toast.LENGTH_LONG).show()
-        (activity as MainActivity).loadFragment(MesListesFragment()) // Appelle la méthode loadFragment de MainActivity pour changer de vue une fois que le bouton valider est selectionne
+
+
+        // Appelle la méthode loadFragment de MainActivity pour changer de vue une fois que le bouton valider est selectionne
+        (activity as MainActivity).loadFragment(MesListesFragment())
 
 
         // Vous pouvez maintenant naviguer vers une autre vue ou effectuer d'autres actions avec la liste des aliments sélectionnés
