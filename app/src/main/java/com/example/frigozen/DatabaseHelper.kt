@@ -66,6 +66,23 @@ class DatabaseHelper(context: Context) :
         return exists
     }
 
+    // Fonction pour vérifier si un utilisateur avec le nom d'utilisateur et le mot de passe est valide
+    fun isUserValid(username: String, password: String): Boolean {
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_USERS,
+            arrayOf(COLUMN_ID),
+            "$COLUMN_USERNAME = ? AND $COLUMN_PASSWORD = ?",
+            arrayOf(username, password),
+            null,
+            null,
+            null
+        )
+        val isValid = cursor.count > 0
+        cursor.close()
+        return isValid
+    }
+
     // Fonction pour récupérer un utilisateur
     fun getUser(email: String): User? {
         val db = readableDatabase
