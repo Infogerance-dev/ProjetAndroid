@@ -13,13 +13,35 @@ import androidx.recyclerview.widget.RecyclerView
 class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var alimentsList: List<Aliment>
     private val selectedAliments = mutableListOf<Aliment>()
     private var listName: String? = null  // Variable pour stocker le nom de la liste
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val databaseHelper = DatabaseHelper(requireContext())
+        val itemNames = selectedAliments.map { it.name }
+
+
+        val email = "testuser@example.com"
+        val user = databaseHelper.getUser(email)
+        val userId = user?.id ?: run {
+            // Si l'utilisateur n'existe pas, vous pouvez l'insérer
+            val username = "testuser"
+            val password = "password123"
+            val newUserId = databaseHelper.insertUser(username, email, password)
+            newUserId
+        }
+
+        if (userId != -1L) {
+            Toast.makeText(requireContext(), "Utilisateur avec ID: $userId.", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(requireContext(), "Utilisateur non trouvé et échec de l'insertion.", Toast.LENGTH_SHORT).show()
+        }
+
+
+
 
         // Récupérer le nom de la liste à partir des arguments
         listName = arguments?.getString("listName")
@@ -104,15 +126,47 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         }
 
 
-
-
-
         // Bouton "V" en bas à droite clicker
         val btnOkList = view.findViewById<Button>(R.id.btnOkList)
         btnOkList.setOnClickListener {
             // Vous pouvez utiliser ce bouton pour une autre action (par exemple, finaliser la liste)
             showSelectedAliments()
+            if (listName.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Veuillez entrer un nom pour la liste.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (selectedAliments.isEmpty()) {
+                Toast.makeText(requireContext(), "Veuillez sélectionner au moins un aliment.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Exemple : récupérez le userId à partir des arguments ou d'une session utilisateur
+            val userId = 1 // Remplacez par le vrai ID utilisateur (peut être récupéré via un login)
+
+            // Préparer la liste des noms des aliments
+            val itemNames = selectedAliments.map { it.name }
+
+            // Insérer la liste et ses aliments dans la base de données
+            val databaseHelper = DatabaseHelper(requireContext())
+            val listId = databaseHelper.insertShoppingList(userId, listName!!, itemNames)
+
+            if (listId != -1L) {
+                Toast.makeText(requireContext(), "Liste $listName créée avec succès !", Toast.LENGTH_SHORT).show()
+                (activity as MainActivity).loadFragment(MesListesFragment()) // Naviguer vers la vue des listes
+            } else {
+                Toast.makeText(requireContext(), "Erreur lors de la création de la liste.", Toast.LENGTH_SHORT).show()
+            }
+
+
         }
+
+        val shoppingLists = databaseHelper.getShoppingListsByUser(1) // 1 pour l'userId temporaire
+
+        shoppingLists.forEach { list ->
+            Log.d("ShoppingList", "Liste ID: ${list.id}, Nom: ${list.name}, Items: ${list.items}")
+        }
+
     }
 
     private fun showSelectedAliments() {
@@ -134,5 +188,7 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         // Vous pouvez maintenant naviguer vers une autre vue ou effectuer d'autres actions avec la liste des aliments sélectionnés
         // Par exemple, enregistrer la liste ou la passer à une autre activité/fragment
     }
+
+
 }
 
