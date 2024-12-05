@@ -131,6 +131,7 @@ class DatabaseHelper(context: Context) :
         }
     }
 
+
     // Méthode pour insérer une liste de courses
     fun insertShoppingList(userId: Int, listName: String, items: List<String>): Long {
         val db = writableDatabase

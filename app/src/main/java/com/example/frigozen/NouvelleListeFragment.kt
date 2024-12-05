@@ -34,6 +34,7 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
             newUserId
         }
 
+
         if (userId != -1L) {
             Toast.makeText(requireContext(), "Utilisateur avec ID: $userId.", Toast.LENGTH_SHORT).show()
         } else {
