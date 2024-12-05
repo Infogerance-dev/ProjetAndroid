@@ -42,10 +42,11 @@ class LoginFragment : Fragment() {
             } else if (databaseHelper.isUserValid(username, password)) {
                 Toast.makeText(context, "Connexion réussie.", Toast.LENGTH_SHORT).show()
 
-                // Naviguer vers l'écran principal
-                val intent = Intent(requireActivity(), MainActivity::class.java)
-                startActivity(intent)
-                requireActivity().finish()
+                // Naviguer vers le fragment BilanNutritifFragment
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, BilanNutritifFragment())
+                    .addToBackStack(null)  // Ajoutez à la pile arrière pour permettre la navigation arrière
+                    .commit()
             } else {
                 Toast.makeText(context, "Nom d'utilisateur ou mot de passe incorrect.", Toast.LENGTH_SHORT).show()
             }
