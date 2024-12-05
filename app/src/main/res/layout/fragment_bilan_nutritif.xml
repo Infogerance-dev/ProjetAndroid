@@ -51,7 +51,23 @@
             android:text="Calories recommandées : "
             android:textSize="18sp"
             android:visibility="gone" />
+        <!-- Time Picker -->
 
+        <android.widget.TimePicker
+            android:id="@+id/timePicker"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:timePickerMode="spinner" />
+        <!-- Bouton pour TimePicker -->
+
+        <Button
+            android:id="@+id/btnSetNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Définir Heure de Notification"
+            android:visibility="gone" /> <!-- Initialement caché -->
 
         <!-- Barre de progression avec label et bouton -->
         <RelativeLayout
@@ -93,7 +109,6 @@
                 android:progress="25" />
 
 
-            <!-- Bouton -->
         </RelativeLayout>
 
     </LinearLayout>
