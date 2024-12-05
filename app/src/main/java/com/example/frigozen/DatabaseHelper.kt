@@ -30,6 +30,8 @@ class DatabaseHelper(context: Context) :
         const val TABLE_LIST_ITEMS = "list_items"
         const val COLUMN_ITEM_ID = "id"
         const val COLUMN_ITEM_NAME = "item_name"
+        const val COLUMN_ITEM_QUANTITY = "quantity"
+        const val COLUMN_ITEM_CALORIES = "calories"
         const val COLUMN_ITEM_LIST_ID = "shopping_list_id"
 
     }
@@ -61,6 +63,8 @@ class DatabaseHelper(context: Context) :
                 $COLUMN_ITEM_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COLUMN_ITEM_NAME TEXT NOT NULL,
                 $COLUMN_ITEM_LIST_ID INTEGER NOT NULL,
+                $COLUMN_ITEM_QUANTITY INTEGER,   -- Nouvelle colonne pour la quantité
+                $COLUMN_ITEM_CALORIES INTEGER,   -- Nouvelle colonne pour les calories
                 FOREIGN KEY ($COLUMN_ITEM_LIST_ID) REFERENCES $TABLE_SHOPPING_LISTS($COLUMN_LIST_ID)
             )
         """.trimIndent()
@@ -69,12 +73,18 @@ class DatabaseHelper(context: Context) :
         db?.execSQL(createTableListItems)
     }
 
+
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         // Mettre à jour la base de données si nécessaire
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_SHOPPING_LISTS")
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_LIST_ITEMS")
         onCreate(db)
+        if (oldVersion < 2) {
+            // Ajouter les nouvelles colonnes
+            db?.execSQL("ALTER TABLE $TABLE_LIST_ITEMS ADD COLUMN $COLUMN_ITEM_QUANTITY INTEGER")
+            db?.execSQL("ALTER TABLE $TABLE_LIST_ITEMS ADD COLUMN $COLUMN_ITEM_CALORIES INTEGER")
+        }
     }
 
     // Fonction pour ajouter un utilisateur
@@ -132,8 +142,9 @@ class DatabaseHelper(context: Context) :
     }
 
 
+
     // Méthode pour insérer une liste de courses
-    fun insertShoppingList(userId: Int, listName: String, items: List<String>): Long {
+    fun insertShoppingList(userId: Int, listName: String, items: List<ListAliment>): Long {
         val db = writableDatabase
         db.beginTransaction() // Commencer une transaction pour garantir la cohérence des données
         var listId: Long = -1
@@ -152,15 +163,18 @@ class DatabaseHelper(context: Context) :
             }
 
             // Insertion des aliments dans la table `list_items`
-            items.forEach { itemName ->
+            items.forEach { item ->
                 val itemValues = ContentValues().apply {
-                    put(COLUMN_ITEM_NAME, itemName)
+                    put(COLUMN_ITEM_NAME, item.name)
                     put(COLUMN_ITEM_LIST_ID, listId)
+                    put(COLUMN_ITEM_QUANTITY, item.quantity)  // Ajout de la quantité
+                    put(COLUMN_ITEM_CALORIES, item.calories)  // Ajout des calories
                 }
+
                 val itemId = db.insert(TABLE_LIST_ITEMS, null, itemValues)
 
                 if (itemId == -1L) {
-                    throw Exception("Erreur lors de l'insertion de l'aliment : $itemName.")
+                    throw Exception("Erreur lors de l'insertion de l'aliment : ${item.name}.")
                 }
             }
 
@@ -204,13 +218,13 @@ class DatabaseHelper(context: Context) :
         return shoppingLists
     }
 
-    private fun getItemsByListId(listId: Int): List<String> {
+    private fun getItemsByListId(listId: Int): List<ListAliment> {
         val db = readableDatabase
-        val items = mutableListOf<String>()
+        val items = mutableListOf<ListAliment>()
 
         val cursor = db.query(
             TABLE_LIST_ITEMS,
-            arrayOf(COLUMN_ITEM_NAME),
+            arrayOf(COLUMN_ITEM_NAME, COLUMN_ITEM_QUANTITY, COLUMN_ITEM_CALORIES),
             "$COLUMN_ITEM_LIST_ID = ?",
             arrayOf(listId.toString()),
             null,
@@ -221,7 +235,9 @@ class DatabaseHelper(context: Context) :
         if (cursor.moveToFirst()) {
             do {
                 val itemName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ITEM_NAME))
-                items.add(itemName)
+                val quantity = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ITEM_QUANTITY))
+                val calories = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ITEM_CALORIES))
+                items.add(ListAliment(itemName, quantity, calories))
             } while (cursor.moveToNext())
         }
 
@@ -244,5 +260,5 @@ data class ShoppingList(
     val id: Int,
     val name: String,
     val userId: Int,
-    val items: List<String>
+    val items: List<ListAliment>
 )

@@ -40,12 +40,12 @@ class AlimentsFragment : Fragment(R.layout.aliments_fragment) {
     private fun getAlimentsByCategory(category: String): MutableList<Aliment> {
         return when (category) {
             "Fruits" -> mutableListOf(
-                Aliment("Pomme", R.drawable.bilan_nutritif_icon, "Fruits"),
-                Aliment("Banane", R.drawable.bilan_nutritif_icon, "Fruits")
+                Aliment("Pomme", R.drawable.bilan_nutritif_icon, "Fruits",52),
+                Aliment("Banane", R.drawable.bilan_nutritif_icon, "Fruits",89)
             )
             "Légumes" -> mutableListOf(
-                Aliment("Carotte", R.drawable.bilan_nutritif_icon, "Légumes"),
-                Aliment("Tomate", R.drawable.bilan_nutritif_icon, "Légumes")
+                Aliment("Carotte", R.drawable.bilan_nutritif_icon, "Légumes",41),
+                Aliment("Tomate", R.drawable.bilan_nutritif_icon, "Légumes",18)
             )
             else -> mutableListOf()
         }
