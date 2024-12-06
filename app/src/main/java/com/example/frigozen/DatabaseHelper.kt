@@ -11,7 +11,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         const val DATABASE_NAME = "FrigoZen.db"
-        const val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 2
 
         // Table pour les utilisateurs
         const val TABLE_USERS = "users"
@@ -63,8 +63,8 @@ class DatabaseHelper(context: Context) :
                 $COLUMN_ITEM_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COLUMN_ITEM_NAME TEXT NOT NULL,
                 $COLUMN_ITEM_LIST_ID INTEGER NOT NULL,
-                $COLUMN_ITEM_QUANTITY INTEGER,   -- Nouvelle colonne pour la quantité
-                $COLUMN_ITEM_CALORIES INTEGER,   -- Nouvelle colonne pour les calories
+                $COLUMN_ITEM_QUANTITY INTEGER NOT NULL,   -- Nouvelle colonne pour la quantité
+                $COLUMN_ITEM_CALORIES INTEGER NOT NULL,   -- Nouvelle colonne pour les calories
                 FOREIGN KEY ($COLUMN_ITEM_LIST_ID) REFERENCES $TABLE_SHOPPING_LISTS($COLUMN_LIST_ID)
             )
         """.trimIndent()
@@ -80,11 +80,6 @@ class DatabaseHelper(context: Context) :
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_SHOPPING_LISTS")
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_LIST_ITEMS")
         onCreate(db)
-        if (oldVersion < 2) {
-            // Ajouter les nouvelles colonnes
-            db?.execSQL("ALTER TABLE $TABLE_LIST_ITEMS ADD COLUMN $COLUMN_ITEM_QUANTITY INTEGER")
-            db?.execSQL("ALTER TABLE $TABLE_LIST_ITEMS ADD COLUMN $COLUMN_ITEM_CALORIES INTEGER")
-        }
     }
 
     // Fonction pour ajouter un utilisateur

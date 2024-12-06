@@ -28,10 +28,19 @@ class AlimentsFragment : Fragment(R.layout.aliments_fragment) {
         selectedCategory = arguments?.getString("selectedCategory") ?: ""
         val alimentsList = getAlimentsByCategory(selectedCategory)
 
+        val groupedAliments = alimentsList.groupBy { it.category }
+
+        // Créer une liste mixte contenant des catégories et des aliments
+        val items = mutableListOf<ListItem>()
+        groupedAliments.forEach { (category, aliments) ->
+            items.add(ListItem.Category(category)) // Ajoute l'en-tête de la catégorie
+            items.addAll(aliments.map { ListItem.AlimentItem(it) }) // Ajoute les aliments sous la catégorie
+        }
+
         recyclerView = view.findViewById(R.id.recyclerViewAliments)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        recyclerView.adapter = AlimentAdapter(alimentsList) { aliment ->
+        recyclerView.adapter = AlimentAdapter(requireContext(), items) { aliment ->
             Toast.makeText(requireContext(), "${aliment.name} ajouté à la liste!", Toast.LENGTH_SHORT).show()
         }
 

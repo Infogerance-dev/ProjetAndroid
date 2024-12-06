@@ -3,7 +3,6 @@ package com.example.frigozen
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -17,14 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frigozen.ListItem
 
-
 class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
 
     private lateinit var recyclerView: RecyclerView
     private val selectedAliments = mutableListOf<Aliment>()
     private var listName: String? = null  // Variable pour stocker le nom de la liste
-
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,24 +28,13 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         val databaseHelper = DatabaseHelper(requireContext())
         val itemNames = selectedAliments.map { it.name }
 
-
         val email = "testuser@example.com"
         val user = databaseHelper.getUser(email)
         val userId = user?.id ?: run {
-            // Si l'utilisateur n'existe pas, vous pouvez l'insérer
             val username = "testuser"
             val password = "password123"
-            val newUserId = databaseHelper.insertUser(username, email, password)
-            newUserId
+            databaseHelper.insertUser(username, email, password)
         }
-
-
-        if (userId != -1L) {
-            Toast.makeText(requireContext(), "Utilisateur avec ID: $userId.", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(requireContext(), "Utilisateur non trouvé et échec de l'insertion.", Toast.LENGTH_SHORT).show()
-        }
-
 
         // Récupérer le nom de la liste à partir des arguments
         listName = arguments?.getString("listName")
@@ -58,67 +43,13 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
             Aliment("Pomme", R.drawable.bilan_nutritif_icon, "Fruits", 52),
             Aliment("Melon", R.drawable.bilan_nutritif_icon, "Fruits", 34),
             Aliment("Banane", R.drawable.bilan_nutritif_icon, "Fruits", 89),
-            Aliment("Poire", R.drawable.bilan_nutritif_icon, "Fruits", 57),
-            Aliment("Orange", R.drawable.bilan_nutritif_icon, "Fruits", 47),
-            Aliment("Fraise", R.drawable.bilan_nutritif_icon, "Fruits", 32),
-            Aliment("Raisin", R.drawable.bilan_nutritif_icon, "Fruits", 69),
-            Aliment("Abricot", R.drawable.bilan_nutritif_icon, "Fruits", 48),
-            Aliment("Pêche", R.drawable.bilan_nutritif_icon, "Fruits", 39),
-            Aliment("Ananas", R.drawable.bilan_nutritif_icon, "Fruits", 50),
-            Aliment("Kiwi", R.drawable.bilan_nutritif_icon, "Fruits", 61),
-            Aliment("Mangue", R.drawable.bilan_nutritif_icon, "Fruits", 60),
-            Aliment("Carotte", R.drawable.bilan_nutritif_icon, "Légumes", 41),
-            Aliment("Tomate", R.drawable.bilan_nutritif_icon, "Légumes", 18),
-            Aliment("Courgette", R.drawable.bilan_nutritif_icon, "Légumes", 17),
-            Aliment("Brocoli", R.drawable.bilan_nutritif_icon, "Légumes", 34),
-            Aliment("Épinard", R.drawable.bilan_nutritif_icon, "Légumes", 23),
-            Aliment("Poivron", R.drawable.bilan_nutritif_icon, "Légumes", 20),
-            Aliment("Chou-fleur", R.drawable.bilan_nutritif_icon, "Légumes", 25),
-            Aliment("Concombre", R.drawable.bilan_nutritif_icon, "Légumes", 16),
-            Aliment("Laitue", R.drawable.bilan_nutritif_icon, "Légumes", 15),
-            Aliment("Oignon", R.drawable.bilan_nutritif_icon, "Légumes", 40),
-            Aliment("Ail", R.drawable.bilan_nutritif_icon, "Légumes", 149),
-            Aliment("Haricot vert", R.drawable.bilan_nutritif_icon, "Légumes", 31),
-            Aliment("Chou de Bruxelles", R.drawable.bilan_nutritif_icon, "Légumes", 43),
-            Aliment("Céleri", R.drawable.bilan_nutritif_icon, "Légumes", 16),
-            Aliment("Poulet", R.drawable.bilan_nutritif_icon, "Viandes", 165),
-            Aliment("Boeuf", R.drawable.bilan_nutritif_icon, "Viandes", 250),
-            Aliment("Porc", R.drawable.bilan_nutritif_icon, "Viandes", 242),
-            Aliment("Agneau", R.drawable.bilan_nutritif_icon, "Viandes", 294),
-            Aliment("Dinde", R.drawable.bilan_nutritif_icon, "Viandes", 135),
-            Aliment("Canard", R.drawable.bilan_nutritif_icon, "Viandes", 337),
-            Aliment("Saumon", R.drawable.bilan_nutritif_icon, "Poissons", 208),
-            Aliment("Thon", R.drawable.bilan_nutritif_icon, "Poissons", 132),
-            Aliment("Maquereau", R.drawable.bilan_nutritif_icon, "Poissons", 305),
-            Aliment("Truite", R.drawable.bilan_nutritif_icon, "Poissons", 148),
-            Aliment("Morue", R.drawable.bilan_nutritif_icon, "Poissons", 82),
-            Aliment("Sardine", R.drawable.bilan_nutritif_icon, "Poissons", 208),
-            Aliment("Crevette", R.drawable.bilan_nutritif_icon, "Poissons", 99),
-            Aliment("Homard", R.drawable.bilan_nutritif_icon, "Poissons", 77),
-            Aliment("Crabe", R.drawable.bilan_nutritif_icon, "Poissons", 97),
-            Aliment("Tofu", R.drawable.bilan_nutritif_icon, "Protéines végétales", 76),
-            Aliment("Tempeh", R.drawable.bilan_nutritif_icon, "Protéines végétales", 193),
-            Aliment("Lentilles", R.drawable.bilan_nutritif_icon, "Légumineuses", 116),
-            Aliment("Pois chiches", R.drawable.bilan_nutritif_icon, "Légumineuses", 164),
-            Aliment("Haricots rouges", R.drawable.bilan_nutritif_icon, "Légumineuses", 127),
-            Aliment("Edamame", R.drawable.bilan_nutritif_icon, "Légumineuses", 121),
-            Aliment("Chia", R.drawable.bilan_nutritif_icon, "Graines", 486),
-            Aliment("Lin", R.drawable.bilan_nutritif_icon, "Graines", 534),
-            Aliment("Tournesol", R.drawable.bilan_nutritif_icon, "Graines", 584),
-            Aliment("Courge", R.drawable.bilan_nutritif_icon, "Légumes", 26),
-            Aliment("Amandes", R.drawable.bilan_nutritif_icon, "Fruits secs", 579),
-            Aliment("Noix", R.drawable.bilan_nutritif_icon, "Fruits secs", 654),
-            Aliment("Pistaches", R.drawable.bilan_nutritif_icon, "Fruits secs", 562),
-            Aliment("Noisettes", R.drawable.bilan_nutritif_icon, "Fruits secs", 628)
+            // Ajoutez le reste de vos aliments ici
         )
 
-
-        fun qshowAddToListDialog(context: Context, aliment: Aliment) {
-            // Créer un objet AlertDialog pour demander la quantité
+        fun showAddToListDialog(context: Context, aliment: Aliment) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Quantité à ajouter")
 
-            // Créer un layout pour saisir la quantité et l'unité
             val layout = LinearLayout(context)
             layout.orientation = LinearLayout.VERTICAL
 
@@ -128,7 +59,6 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
             quantityInput.hint = "Quantité (entier)"
             layout.addView(quantityInput)
 
-            // Créer un RadioGroup avec des RadioButtons pour choisir entre grammes et kilos
             val radioGroup = RadioGroup(context)
             radioGroup.orientation = RadioGroup.HORIZONTAL
 
@@ -148,16 +78,8 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
 
             builder.setPositiveButton("Ajouter") { _, _ ->
                 val quantityText = quantityInput.text.toString()
-
                 if (quantityText.isNotEmpty() && quantityText.toIntOrNull() != null) {
                     val quantity = quantityText.toInt()
-                    // Passer le nom de la liste au fragment NouvelleListeFragment
-                    val fragment = NouvelleListeFragment()
-                    val bundle = Bundle()
-                    bundle.putString("quantity", quantityText)
-                    fragment.arguments = bundle
-
-                    // Vérification de l'unité sélectionnée (grammes ou kilos)
                     val unit = if (radioGroup.checkedRadioButtonId == grammesRadioButton.id) {
                         "Gramme"
                     } else {
@@ -165,27 +87,18 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
                     }
 
                     if (quantity > 0) {
-                        //onAddToListClick(aliment)
+                        selectedAliments.add(aliment.copy(quantity = quantity))
                         Toast.makeText(context, "Ajouté: ${aliment.name}, Quantité: $quantity $unit", Toast.LENGTH_SHORT).show()
-
-                        // Exemple d'ajout dans une liste fictive :
-                        // alimentList.add(aliment.copy(quantity = totalQuantityInGrams))
-
                     } else {
-                        // Afficher un message d'erreur si la quantité n'est pas valide
                         Toast.makeText(context, "La quantité doit être positive", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    // Afficher un message d'erreur si la quantité est invalide
                     Toast.makeText(context, "Veuillez entrer une quantité valide", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            builder.setNegativeButton("Annuler") { dialog, _ ->
-                dialog.cancel()
-            }
-
-            builder.show() // Affiche la boîte de dialogue
+            builder.setNegativeButton("Annuler") { dialog, _ -> dialog.cancel() }
+            builder.show()
         }
 
         // Grouper les aliments par catégorie
@@ -194,26 +107,20 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
         // Créer une liste mixte contenant des catégories et des aliments
         val items = mutableListOf<ListItem>()
         groupedAliments.forEach { (category, aliments) ->
-            items.add(ListItem.Category(category)) // Ajoute l'en-tête de la catégorie
-            items.addAll(aliments.map { ListItem.AlimentItem(it) }) // Ajoute les aliments sous la catégorie
+            items.add(ListItem.Category(category))
+            items.addAll(aliments.map { ListItem.AlimentItem(it) })
         }
 
-
-
-        // Initialisation de la RecyclerView avec la liste mixte (catégories + aliments)
+        // Initialisation de la RecyclerView
         recyclerView = view.findViewById(R.id.recyclerViewAliments)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = AlimentAdapter(items) { aliment ->
-            selectedAliments.add(aliment)
-            Toast.makeText(requireContext(), "${aliment.name} ajouté à la liste!", Toast.LENGTH_SHORT).show()
+        recyclerView.adapter = AlimentAdapter(requireContext(), items) { aliment ->
+            showAddToListDialog(requireContext(), aliment)
         }
 
-
-        // Bouton "V" en bas à droite clicker
+        // Bouton "V" en bas à droite
         val btnOkList = view.findViewById<Button>(R.id.btnOkList)
         btnOkList.setOnClickListener {
-            showSelectedAliments()
-            // Vérifications préliminaires
             if (listName.isNullOrEmpty()) {
                 Toast.makeText(requireContext(), "Veuillez entrer un nom pour la liste.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -224,18 +131,12 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
                 return@setOnClickListener
             }
 
-            val userId = 1 // Vous pouvez remplacer par l'ID réel de l'utilisateur
+            val userId = 1 // ID utilisateur temporaire
             val listAliments: List<ListAliment> = selectedAliments.map { aliment ->
                 ListAliment(aliment.name, aliment.quantity, aliment.calories)
             }
 
-            // Insérer la liste dans la base de données
             val listId = databaseHelper.insertShoppingList(userId, listName!!, listAliments)
-
-
-
-
-
 
             if (listId != -1L) {
                 Toast.makeText(requireContext(), "Liste $listName créée avec succès !", Toast.LENGTH_SHORT).show()
@@ -244,40 +145,17 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
                 Toast.makeText(requireContext(), "Erreur lors de la création de la liste.", Toast.LENGTH_SHORT).show()
             }
         }
-
-
-        val shoppingLists = databaseHelper.getShoppingListsByUser(1) // 1 pour l'userId temporaire
-
-        shoppingLists.forEach { shoppingList ->
-            Log.d("ShoppingList", "Nom de la liste: ${shoppingList.name}")
-            shoppingList.items.forEach { item ->
-                Log.d("ShoppingItem", "Nom: ${item.name}, Quantité: ${item.quantity}, Calories: ${item.calories}")
-            }
-
-        }
-
     }
 
     private fun showSelectedAliments() {
-        // Vérifier si des aliments ont été sélectionnés
         if (selectedAliments.isEmpty()) {
             Toast.makeText(requireContext(), "Aucun aliment sélectionné.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Afficher les aliments sélectionnés dans un Toast
         val selectedNames = selectedAliments.joinToString(", ") { it.name }
         Toast.makeText(requireContext(), "Aliments ajoutés à $listName : $selectedNames", Toast.LENGTH_LONG).show()
 
-
-        // Appelle la méthode loadFragment de MainActivity pour changer de vue une fois que le bouton valider est selectionne
         (activity as MainActivity).loadFragment(MesListesFragment())
-
-
-        // Vous pouvez maintenant naviguer vers une autre vue ou effectuer d'autres actions avec la liste des aliments sélectionnés
-        // Par exemple, enregistrer la liste ou la passer à une autre activité/fragment
     }
-
-
 }
-

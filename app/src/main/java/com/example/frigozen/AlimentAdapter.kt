@@ -17,11 +17,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 
-
+// AlimentAdapter avec un callback pour gérer l'ajout à la liste dans le fragment
 class AlimentAdapter(
     private val context: Context,
     private val items: List<ListItem>,
-    private val onAddToListClick: (Aliment) -> Unit
+    private val onAddToListClick: (Aliment) -> Unit // Le callback
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
@@ -31,7 +31,6 @@ class AlimentAdapter(
             else -> throw IllegalArgumentException("Type inconnu à la position $position")
         }
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 0) { // Catégorie
@@ -51,7 +50,6 @@ class AlimentAdapter(
         }
     }
 
-
     override fun getItemCount(): Int = items.size
 
     inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -67,18 +65,13 @@ class AlimentAdapter(
         private val tvAlimentName: TextView = view.findViewById(R.id.tvAlimentName)
         private val btnAddToList: Button = view.findViewById(R.id.btnAddToList)
 
-
-
-
         fun bind(aliment: Aliment) {
             ivAliment.setImageResource(aliment.imageResId)
             tvAlimentName.text = aliment.name
             btnAddToList.setOnClickListener {
-                // Utilise itemView.context pour obtenir un contexte valide
-                qshowAddToListDialog(itemView.context, aliment)
+                // Utiliser le callback pour appeler la méthode dans le fragment
+                onAddToListClick(aliment)
             }
         }
-
-
     }
 }
