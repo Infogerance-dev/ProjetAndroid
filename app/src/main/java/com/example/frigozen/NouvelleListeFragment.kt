@@ -64,10 +64,12 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
 
             val grammesRadioButton = RadioButton(context)
             grammesRadioButton.text = "Grammes"
+            grammesRadioButton.id = View.generateViewId()
             grammesRadioButton.isChecked = true // Par défaut, on choisit les grammes
 
             val kilosRadioButton = RadioButton(context)
             kilosRadioButton.text = "Kilogrammes"
+            kilosRadioButton.id = View.generateViewId()
 
             radioGroup.addView(grammesRadioButton)
             radioGroup.addView(kilosRadioButton)
@@ -79,16 +81,32 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
             builder.setPositiveButton("Ajouter") { _, _ ->
                 val quantityText = quantityInput.text.toString()
                 if (quantityText.isNotEmpty() && quantityText.toIntOrNull() != null) {
-                    val quantity = quantityText.toInt()
-                    val unit = if (radioGroup.checkedRadioButtonId == grammesRadioButton.id) {
-                        "Gramme"
-                    } else {
-                        "Kilogramme"
+                    var quantity = quantityText.toInt()
+                    val selectedUnit = when (radioGroup.checkedRadioButtonId) {
+                        grammesRadioButton.id -> "Grammes"
+                        kilosRadioButton.id -> {
+                            // Convertir les kilogrammes en grammes
+                            quantity *= 1000
+                            "Kilogrammes (converti en grammes)"
+                        }
+                        else -> {
+                            Toast.makeText(context, "Veuillez sélectionner une unité.", Toast.LENGTH_SHORT).show()
+                            return@setPositiveButton
+                        }
                     }
 
                     if (quantity > 0) {
-                        selectedAliments.add(aliment.copy(quantity = quantity))
-                        Toast.makeText(context, "Ajouté: ${aliment.name}, Quantité: $quantity $unit", Toast.LENGTH_SHORT).show()
+                        // Calculer les calories ajustées
+                        val adjustedCalories = (quantity / 100.0 * aliment.calories).toInt()
+
+                        // Ajouter l'aliment avec les calories ajustées à la liste
+                        selectedAliments.add(aliment.copy(quantity = quantity, calories = adjustedCalories))
+
+                        Toast.makeText(
+                            context,
+                            "Ajouté: ${aliment.name}, Quantité: $quantity g, Calories: $adjustedCalories kcal",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
                         Toast.makeText(context, "La quantité doit être positive", Toast.LENGTH_SHORT).show()
                     }
@@ -100,6 +118,8 @@ class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
             builder.setNegativeButton("Annuler") { dialog, _ -> dialog.cancel() }
             builder.show()
         }
+
+
 
         // Grouper les aliments par catégorie
         val groupedAliments = alimentsList.groupBy { it.category }
