@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -28,16 +29,11 @@ class DetailListeFragment : Fragment() {
 
         databaseHelper = DatabaseHelper(requireContext())
 
-
-
-        // Configure l'adaptateur avec une liste vide initialement
         adapter = AlimentAdapterListe(requireContext(), mutableListOf()) { selectedAliment ->
-            // Gérer l'événement de clic (exemple)
             Toast.makeText(requireContext(), "${selectedAliment.name} sélectionné", Toast.LENGTH_SHORT).show()
         }
         recyclerView.adapter = adapter
 
-        // Récupérer l'ID de la liste depuis les arguments
         val listId = arguments?.getInt("listId", -1) ?: -1
         if (listId != -1) {
             loadAlimentsForList(listId)
@@ -45,6 +41,7 @@ class DetailListeFragment : Fragment() {
             Toast.makeText(requireContext(), "Erreur : ID de liste invalide", Toast.LENGTH_SHORT).show()
         }
 
+        // Récupérer le nom de la liste et l'afficher
         val listName = arguments?.getString("listName", "") ?: ""
         val listNameTextView = view.findViewById<TextView>(R.id.listNameTextView)
         listNameTextView.text = listName
@@ -52,6 +49,10 @@ class DetailListeFragment : Fragment() {
         // Configurer le bouton de retour en arrière
         val backButton: View = view.findViewById(R.id.backButton)
         backButton.setOnClickListener {
+            // Appel de la méthode dans le fragment parent pour réafficher le RecyclerView
+            (parentFragment as? MesListesFragment)?.onBackPressed()
+
+            // Retourner dans la pile des fragments
             parentFragmentManager.popBackStack()
         }
 
@@ -66,15 +67,8 @@ class DetailListeFragment : Fragment() {
             } else {
                 adapter.updateItems(items)
             }
-
-            // Log pour debug
-            items.forEach { Log.d("DetailListeFragment", "Aliment : ${it.name}") }
         } catch (e: Exception) {
-            Log.e("DetailListeFragment", "Erreur lors du chargement des aliments", e)
-            Toast.makeText(requireContext(), "Une erreur s'est produite", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Erreur lors du chargement des aliments", Toast.LENGTH_SHORT).show()
         }
     }
-
-
-
 }

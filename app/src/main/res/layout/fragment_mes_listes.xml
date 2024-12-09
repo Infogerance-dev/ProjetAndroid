@@ -5,19 +5,19 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- RecyclerView pour afficher les listes -->
+
+    <!-- Conteneur pour afficher les fragments -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMesListes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="8dp" />
 
-    <!-- Conteneur pour afficher les fragments -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
-        android:visibility="gone" /> <!-- On peut cacher ce conteneur par défaut -->
+        android:visibility="gone" />
 
 </LinearLayout>

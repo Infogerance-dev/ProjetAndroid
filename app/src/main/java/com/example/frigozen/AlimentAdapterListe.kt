@@ -31,7 +31,7 @@ class AlimentAdapterListe(
     fun updateItems(newItems: List<ListAliment>) {
         items.clear()
         items.addAll(newItems)
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, newItems.size)  // Utiliser notifyItemRangeChanged() au lieu de notifyDataSetChanged()
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
