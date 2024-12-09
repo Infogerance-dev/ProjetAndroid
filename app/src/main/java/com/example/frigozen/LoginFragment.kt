@@ -42,6 +42,13 @@ class LoginFragment : Fragment() {
             } else if (databaseHelper.isUserValid(username, password)) {
                 Toast.makeText(context, "Connexion réussie.", Toast.LENGTH_SHORT).show()
 
+            // Afficher l'utilisateur connecter dans l'application
+                val sharedPreferences = requireContext().getSharedPreferences("user_prefs", 0)
+                val editor = sharedPreferences.edit()
+                editor.putString("username", username)  // Enregistrer le nom d'utilisateur
+                editor.putBoolean("is_logged_in", true)  // Marquer l'utilisateur comme connecté
+                editor.apply()
+
                 // Naviguer vers le fragment BilanNutritifFragment
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment, BilanNutritifFragment())

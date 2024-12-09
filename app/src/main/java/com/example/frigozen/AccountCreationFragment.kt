@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -24,6 +25,11 @@ class AccountCreationFragment : Fragment() {
         // Initialiser l'instance de DatabaseHelper
         databaseHelper = DatabaseHelper(requireContext())
 
+        // Récupérer les SharedPreferences
+        val sharedPreferences = requireContext().getSharedPreferences("user_prefs", 0)
+        val username = sharedPreferences.getString("username", null)
+        val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
+
         // Récupérer les champs de saisie et le bouton
         val usernameField: EditText = view.findViewById(R.id.editTextUsername)
         val emailField: EditText = view.findViewById(R.id.editTextEmail)
@@ -31,34 +37,82 @@ class AccountCreationFragment : Fragment() {
         val confirmPasswordField: EditText = view.findViewById(R.id.editTextConfirmPassword)
         val saveButton: Button = view.findViewById(R.id.buttonSavePassword)
 
-        // Ajouter le listener pour le bouton "Enregistrer"
-        saveButton.setOnClickListener {
-            val username = usernameField.text.toString().trim()
-            val email = emailField.text.toString().trim()
-            val password = passwordField.text.toString()
-            val confirmPassword = confirmPasswordField.text.toString()
+        // Ajouter les vues supplémentaires pour afficher les infos utilisateur
+        val accountInfoTextView: TextView = view.findViewById(R.id.textViewAccountInfo)
+        val logoutButton: Button = view.findViewById(R.id.buttonLogout)
 
-            // Validation des champs
-            if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(context, "Veuillez remplir toutes les informations requises.", Toast.LENGTH_SHORT).show()
-            } else if (password != confirmPassword) {
-                Toast.makeText(context, "Les mots de passe ne correspondent pas.", Toast.LENGTH_SHORT).show()
-            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(context, "Veuillez entrer une adresse email valide.", Toast.LENGTH_SHORT).show()
-            } else if (databaseHelper.isEmailExists(email)) {
-                Toast.makeText(context, "Cet email est déjà utilisé.", Toast.LENGTH_SHORT).show()
-            } else {
-                // Enregistrement dans SQLite
-                val userId = databaseHelper.insertUser(username, email, password)
-                if (userId > 0) {
-                    Toast.makeText(context, "Compte créé avec succès !", Toast.LENGTH_SHORT).show()
+        if (isLoggedIn && username != null) {
+            // L'utilisateur est connecté, afficher ses informations
+            accountInfoTextView.visibility = View.VISIBLE
+            logoutButton.visibility = View.VISIBLE
+            accountInfoTextView.text = "Bienvenue, $username !"
 
-                    // Navigation vers un autre écran
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.nav_host_fragment, BilanNutritifFragment())
-                        .commit()
+            // Cacher les champs de création de compte
+            usernameField.visibility = View.GONE
+            emailField.visibility = View.GONE
+            passwordField.visibility = View.GONE
+            confirmPasswordField.visibility = View.GONE
+            saveButton.visibility = View.GONE
+
+            // Ajouter l'action pour le bouton de déconnexion
+            logoutButton.setOnClickListener {
+                val editor = sharedPreferences.edit()
+                editor.clear() // Supprimer les informations de connexion
+                editor.apply()
+
+                // Réafficher les champs de création de compte
+                usernameField.visibility = View.VISIBLE
+                emailField.visibility = View.VISIBLE
+                passwordField.visibility = View.VISIBLE
+                confirmPasswordField.visibility = View.VISIBLE
+                saveButton.visibility = View.VISIBLE
+
+                // Cacher les infos utilisateur et le bouton de déconnexion
+                accountInfoTextView.visibility = View.GONE
+                logoutButton.visibility = View.GONE
+
+                Toast.makeText(context, "Déconnexion réussie.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            // L'utilisateur n'est pas connecté, permettre la création d'un compte
+            accountInfoTextView.visibility = View.GONE
+            logoutButton.visibility = View.GONE
+
+            // Ajouter le listener pour le bouton "Enregistrer"
+            saveButton.setOnClickListener {
+                val usernameInput = usernameField.text.toString().trim()
+                val emailInput = emailField.text.toString().trim()
+                val passwordInput = passwordField.text.toString()
+                val confirmPasswordInput = confirmPasswordField.text.toString()
+
+                // Validation des champs
+                if (usernameInput.isEmpty() || emailInput.isEmpty() || passwordInput.isEmpty() || confirmPasswordInput.isEmpty()) {
+                    Toast.makeText(context, "Veuillez remplir toutes les informations requises.", Toast.LENGTH_SHORT).show()
+                } else if (passwordInput != confirmPasswordInput) {
+                    Toast.makeText(context, "Les mots de passe ne correspondent pas.", Toast.LENGTH_SHORT).show()
+                } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
+                    Toast.makeText(context, "Veuillez entrer une adresse email valide.", Toast.LENGTH_SHORT).show()
+                } else if (databaseHelper.isEmailExists(emailInput)) {
+                    Toast.makeText(context, "Cet email est déjà utilisé.", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Erreur lors de la création du compte. Veuillez réessayer.", Toast.LENGTH_SHORT).show()
+                    // Enregistrement dans SQLite
+                    val userId = databaseHelper.insertUser(usernameInput, emailInput, passwordInput)
+                    if (userId > 0) {
+                        Toast.makeText(context, "Compte créé avec succès !", Toast.LENGTH_SHORT).show()
+
+                        // Sauvegarder l'utilisateur comme connecté
+                        val editor = sharedPreferences.edit()
+                        editor.putString("username", usernameInput)
+                        editor.putBoolean("is_logged_in", true)
+                        editor.apply()
+
+                        // Afficher les informations de l'utilisateur
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.nav_host_fragment, BilanNutritifFragment())
+                            .commit()
+                    } else {
+                        Toast.makeText(context, "Erreur lors de la création du compte. Veuillez réessayer.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -78,4 +132,3 @@ class AccountCreationFragment : Fragment() {
         bottomNavigation.visibility = View.VISIBLE
     }
 }
-
