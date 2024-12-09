@@ -4,7 +4,9 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.os.Parcelable
 import android.util.Log
+import kotlinx.android.parcel.Parcelize
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -188,6 +190,7 @@ class DatabaseHelper(context: Context) :
         val db = readableDatabase
         val shoppingLists = mutableListOf<ShoppingList>()
 
+        // Requête pour récupérer les listes dans l'ordre décroissant par ID
         val cursor = db.query(
             TABLE_SHOPPING_LISTS,
             null,
@@ -195,7 +198,7 @@ class DatabaseHelper(context: Context) :
             arrayOf(userId.toString()),
             null,
             null,
-            null
+            "$COLUMN_LIST_ID DESC" // Ajout du tri décroissant
         )
 
         if (cursor.moveToFirst()) {
@@ -213,7 +216,8 @@ class DatabaseHelper(context: Context) :
         return shoppingLists
     }
 
-    private fun getItemsByListId(listId: Int): List<ListAliment> {
+
+    fun getItemsByListId(listId: Int): List<ListAliment> {
         val db = readableDatabase
         val items = mutableListOf<ListAliment>()
 
@@ -251,9 +255,10 @@ data class User(
     val password: String
 )
 
+@Parcelize
 data class ShoppingList(
     val id: Int,
     val name: String,
     val userId: Int,
     val items: List<ListAliment>
-)
+) : Parcelable
