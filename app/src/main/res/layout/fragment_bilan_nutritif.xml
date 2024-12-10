@@ -1,115 +1,93 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/app_background">
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
 
-        <EditText
-            android:id="@+id/etPoids"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="16dp"
-            android:hint="Entrez votre poids (kg)"
-            android:inputType="numberDecimal" />
-
-        <EditText
-            android:id="@+id/etTaille"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="16dp"
-            android:hint="Entrez votre taille (m)"
-            android:inputType="numberDecimal" />
-
-        <Button
-            android:id="@+id/btnCalculer"
+        <!-- Section Entrée utilisateur -->
+        <LinearLayout
+            android:id="@+id/llUserInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Calculer"
-            android:backgroundTint="@color/Button"/>
+            android:orientation="vertical"
+            android:visibility="visible">
 
-        <TextView
-            android:id="@+id/tvIMC"
+            <EditText
+                android:id="@+id/etPoids"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Poids (kg)"
+                android:inputType="numberDecimal"
+                android:contentDescription="Champ de saisie pour le poids" />
+
+            <EditText
+                android:id="@+id/etTaille"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Taille (m)"
+                android:inputType="numberDecimal"
+                android:contentDescription="Champ de saisie pour la taille" />
+
+            <Button
+                android:id="@+id/btnCalculer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Calculer"
+                android:contentDescription="Bouton pour calculer l'IMC et les calories recommandées" />
+        </LinearLayout>
+
+        <!-- Section Résultats -->
+        <LinearLayout
+            android:id="@+id/llResults"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="IMC : "
-            android:layout_marginBottom="16dp"
-            android:textSize="18sp"
-            android:visibility="gone" />
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <TextView
-            android:id="@+id/tvCalories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Calories recommandées : "
-            android:textSize="18sp"
-            android:visibility="gone" />
-        <!-- Time Picker -->
+            <TextView
+                android:id="@+id/tvIMC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:hint="Votre IMC"
+                android:visibility="gone"
+                android:layout_marginTop="16dp"
+                android:contentDescription="Affichage de l'IMC calculé" />
 
-        <android.widget.TimePicker
-            android:id="@+id/timePicker"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:timePickerMode="spinner" />
-        <!-- Bouton pour TimePicker -->
+            <TextView
+                android:id="@+id/tvCalories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:hint="Vos Calories"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:contentDescription="Affichage des calories recommandées" />
 
+            <ProgressBar
+                android:id="@+id/progressBarCalories"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:contentDescription="Barre de progression indiquant la proportion des calories atteintes" />
+        </LinearLayout>
+
+        <!-- Section Notifications -->
         <Button
             android:id="@+id/btnSetNotification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Définir Heure de Notification"
-            android:visibility="gone" /> <!-- Initialement caché -->
-
-        <!-- Barre de progression avec label et bouton -->
-        <RelativeLayout
-            android:id="@+id/groupResult"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <!-- Label -->
-
-            <TextView
-                android:id="@+id/tvCaloriesConsommeesLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/progressBarCalories"
-                android:layout_marginEnd="8dp"
-                android:textStyle="italic"
-                android:text="Calories consommées :" />
-
-            <!-- ProgressBar -->
-
-            <Button
-                android:id="@+id/btnCaloriesAction"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignRight="@id/progressBarCalories"
-                android:backgroundTint="@color/Button"
-                android:text="+" />
-
-            <ProgressBar
-                android:id="@+id/progressBarCalories"
-                style="R.style.Widget_ProgressBar_Horizontal"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:max="100"
-                android:progress="25" />
-
-
-        </RelativeLayout>
-
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:text="Programmer une notification"
+            android:contentDescription="Bouton pour programmer une notification quotidienne" />
     </LinearLayout>
 </ScrollView>

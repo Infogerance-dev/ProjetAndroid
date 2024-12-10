@@ -2,75 +2,40 @@ package com.example.frigozen
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import androidx.core.database.getFloatOrNull
 
-class DatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        const val DATABASE_NAME = "FrigoZen.db"
-        const val DATABASE_VERSION = 2
-
-        // Table pour les utilisateurs
-        const val TABLE_USERS = "users"
-        const val COLUMN_ID = "id"
-        const val COLUMN_USERNAME = "username"
-        const val COLUMN_EMAIL = "email"
-        const val COLUMN_PASSWORD = "password"
+        private const val DATABASE_NAME = "frigozen.db"
+        private const val DATABASE_VERSION = 2
+        private const val TABLE_USERS = "users"
+        private const val COLUMN_EMAIL = "email"
+        private const val COLUMN_IMC = "imc"
+        private const val COLUMN_CALORIES = "calories"
     }
 
-    override fun onCreate(db: SQLiteDatabase?) {
-        // Création de la table utilisateur
-        val createTableUsers = """
+    override fun onCreate(db: SQLiteDatabase) {
+        val createUsersTable = """
             CREATE TABLE $TABLE_USERS (
-                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                $COLUMN_USERNAME TEXT NOT NULL,
-                $COLUMN_EMAIL UNIQUE NOT NULL,
-                $COLUMN_PASSWORD TEXT NOT NULL
+                $COLUMN_EMAIL TEXT PRIMARY KEY,
+                $COLUMN_IMC REAL,
+                $COLUMN_CALORIES REAL
             )
         """.trimIndent()
-        db?.execSQL(createTableUsers)
+        db.execSQL(createUsersTable)
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        // Mettre à jour la base de données si nécessaire
-        db?.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
-        onCreate(db)
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 2) {
-            db?.execSQL("ALTER TABLE $TABLE_USERS ADD COLUMN imc REAL")
-            db?.execSQL("ALTER TABLE $TABLE_USERS ADD COLUMN calories INTEGER")
+            db.execSQL("ALTER TABLE $TABLE_USERS ADD COLUMN $COLUMN_IMC REAL")
+            db.execSQL("ALTER TABLE $TABLE_USERS ADD COLUMN $COLUMN_CALORIES REAL")
         }
     }
 
-    // Fonction pour ajouter un utilisateur
-    fun insertUser(username: String, email: String, password: String): Long {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COLUMN_USERNAME, username)
-            put(COLUMN_EMAIL, email)
-            put(COLUMN_PASSWORD, password)
-        }
-        return db.insert(TABLE_USERS, null, values)
-    }
-    // Fonction pour vérifier si l'email n'est pas déjà existant dans la B
-    fun isEmailExists(email: String): Boolean {
-        val db = readableDatabase
-        val cursor = db.query(
-            TABLE_USERS,
-            arrayOf(COLUMN_ID),
-            "$COLUMN_EMAIL = ?",
-            arrayOf(email),
-            null,
-            null,
-            null
-        )
-        val exists = cursor.count > 0
-        cursor.close()
-        return exists
-    }
-
-    // Fonction pour récupérer un utilisateur
     fun getUser(email: String): User? {
         val db = readableDatabase
         val cursor = db.query(
@@ -82,45 +47,38 @@ class DatabaseHelper(context: Context) :
             null,
             null
         )
-        return if (cursor.moveToFirst()) {
-            val user = User(
-                id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-                username = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USERNAME)),
-                email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
-                password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
-                imc = cursor.getFloat(cursor.getColumnIndexOrThrow("imc")),
-                calories = cursor.getFloat(cursor.getColumnIndexOrThrow("calories"))
-            )
+
+        return if (cursor != null && cursor.moveToFirst()) {
+            val imc = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_IMC))
+            val calories = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_CALORIES))
             cursor.close()
-            user
+            User(email, imc, calories)
         } else {
-            cursor.close()
+            cursor?.close()
             null
         }
     }
 
-    fun updateHealthData(email: String, imc: Float, calories: Float): Int {
+    fun updateHealthData(email: String, imc: Float, calories: Float) {
         val db = writableDatabase
-        val values = ContentValues().apply {
-            put("imc", imc)
-            put("calories", calories)
+        val values = ContentValues()
+        values.put(COLUMN_IMC, imc)
+        values.put(COLUMN_CALORIES, calories)
+
+        val rowsUpdated = db.update(TABLE_USERS, values, "$COLUMN_EMAIL = ?", arrayOf(email))
+        if (rowsUpdated == 0) {
+            values.put(COLUMN_EMAIL, email)
+            db.insert(TABLE_USERS, null, values)
         }
-        return db.update(
-            TABLE_USERS,
-            values,
-            "$COLUMN_EMAIL = ?",
-            arrayOf(email)
-        )
     }
 
+    private fun Cursor.getFloatOrNull(columnName: String): Float? {
+        val index = getColumnIndex(columnName)
+        return if (index >= 0 && !isNull(index)) getFloat(index) else null
+    }
 }
-
-// Classe pour représenter un utilisateur
 data class User(
-    val id: Int,
-    val username: String,
     val email: String,
-    val password: String,
-    val imc: Float,
-    val calories: Float
+    val imc: Float?,
+    val calories: Float?
 )
