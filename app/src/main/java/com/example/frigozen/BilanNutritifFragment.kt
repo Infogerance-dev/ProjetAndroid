@@ -1,6 +1,5 @@
 package com.example.frigozen
 
-import NotificationReceiver
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -150,25 +149,51 @@ class BilanNutritifFragment : Fragment(layout.fragment_bilan_nutritif) {
     }
 
     private fun showTimePickerDialog() {
+        if (!isAdded) return // Vérifie que le Fragment est attaché
+
         val timePickerDialog = AlertDialog.Builder(requireContext())
-        val timePickerView = layoutInflater.inflate(layout.time_picker_dialog, null)
-        val timePicker: TimePicker = timePickerView.findViewById(R.id.time_picker)
+        val timePickerView = layoutInflater.inflate(R.layout.time_picker_dialog, null)
+        val timePicker: TimePicker? = timePickerView.findViewById(R.id.time_picker)
+
+        if (timePicker == null) {
+            Toast.makeText(requireContext(), "Erreur lors du chargement de l'interface", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         timePickerDialog.setView(timePickerView)
         timePickerDialog.setPositiveButton("OK") { _, _ ->
-            val hour = timePicker.hour
-            val minute = timePicker.minute
-            scheduleNotification(hour, minute)
+            val hour: Int
+            val minute: Int
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                hour = timePicker.hour
+                minute = timePicker.minute
+            } else {
+                hour = timePicker.currentHour
+                minute = timePicker.currentMinute
+            }
+
+            if (isAdded) {
+                scheduleNotification(hour, minute)
+            }
         }
         timePickerDialog.setNegativeButton("Annuler", null)
         timePickerDialog.show()
     }
 
+
     private fun scheduleNotification(hour: Int, minute: Int) {
+        if (!isAdded) return // Vérifie que le Fragment est encore attaché
+
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
+
+            // S'assurer que l'heure est dans le futur
+            if (timeInMillis < System.currentTimeMillis()) {
+                add(Calendar.DAY_OF_YEAR, 1)
+            }
         }
 
         val intent = Intent(requireContext(), NotificationReceiver::class.java)
@@ -180,10 +205,13 @@ class BilanNutritifFragment : Fragment(layout.fragment_bilan_nutritif) {
         )
 
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
 
-        Toast.makeText(requireContext(), "Notification planifiée à $hour:$minute", Toast.LENGTH_SHORT).show()
+        if (isAdded && activity != null) {
+            Toast.makeText(requireContext(), "Notification planifiée à $hour:$minute", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     private fun requestNotificationPermission(btnSetNotification: Button) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
