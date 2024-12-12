@@ -1,6 +1,6 @@
 package com.example.frigozen
 
-import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +10,12 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class LoginFragment : Fragment() {
 
     private lateinit var databaseHelper: DatabaseHelper
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,53 +24,71 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
+        // Cacher le BottomNavigationView
+        (activity as? MainActivity)?.setBottomNavigationVisibility(false)
+
         // Initialiser la base de données
         databaseHelper = DatabaseHelper(requireContext())
 
-        // Champs du layout
-        val usernameField: EditText = view.findViewById(R.id.editTextUsername)
-        val passwordField: EditText = view.findViewById(R.id.editTextPassword)
-        val loginButton: Button = view.findViewById(R.id.buttonLogin)
-        val createAccountButton: Button = view.findViewById(R.id.buttonCreateAccount)
-        val forgotPasswordLink: TextView = view.findViewById(R.id.textForgotPassword)
+        // Initialiser SharedPreferences
+        sharedPreferences = requireContext().getSharedPreferences("user_prefs", 0)
 
-        // Gestion du bouton "Se connecter"
-        loginButton.setOnClickListener {
-            val username = usernameField.text.toString().trim()
-            val password = passwordField.text.toString()
+        // Masquer la barre de navigation système
+        requireActivity().window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                )
+
+        // Initialiser les vues
+        val usernameField: EditText? = view.findViewById(R.id.editTextUsername)
+        val passwordField: EditText? = view.findViewById(R.id.editTextPassword)
+        val loginButton: Button? = view.findViewById(R.id.buttonLogin)
+        val createAccountButton: Button? = view.findViewById(R.id.buttonCreateAccount)
+        val forgotPasswordLink: TextView? = view.findViewById(R.id.textForgotPassword)
+
+
+        // Ajouter un listener au bouton de connexion
+        loginButton?.setOnClickListener {
+            val username = usernameField?.text.toString().trim()
+            val password = passwordField?.text.toString()
 
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(context, "Veuillez remplir tous les champs.", Toast.LENGTH_SHORT).show()
             } else if (databaseHelper.isUserValid(username, password)) {
                 Toast.makeText(context, "Connexion réussie.", Toast.LENGTH_SHORT).show()
 
-            // Afficher l'utilisateur connecter dans l'application
-                val sharedPreferences = requireContext().getSharedPreferences("user_prefs", 0)
+                // Enregistrer les informations de l'utilisateur dans SharedPreferences
                 val editor = sharedPreferences.edit()
-                editor.putString("username", username)  // Enregistrer le nom d'utilisateur
-                editor.putBoolean("is_logged_in", true)  // Marquer l'utilisateur comme connecté
+                editor.putString("username", username)
+                editor.putBoolean("is_logged_in", true)
                 editor.apply()
+
+                // Cacher le BottomNavigationView
+                (activity as? MainActivity)?.setBottomNavigationVisibility(true)
 
                 // Naviguer vers le fragment BilanNutritifFragment
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment, BilanNutritifFragment())
-                    .addToBackStack(null)  // Ajoutez à la pile arrière pour permettre la navigation arrière
+                    .addToBackStack(null)
                     .commit()
             } else {
                 Toast.makeText(context, "Nom d'utilisateur ou mot de passe incorrect.", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Navigation vers la création de compte
-        createAccountButton.setOnClickListener {
+        // Ajouter un listener au bouton de création de compte
+        createAccountButton?.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment, AccountCreationFragment())
                 .addToBackStack(null)
                 .commit()
         }
 
-        // Gestion du lien "Mot de passe oublié ?"
-        forgotPasswordLink.setOnClickListener {
+        // Ajouter un listener au lien "Mot de passe oublié"
+        forgotPasswordLink?.setOnClickListener {
             Toast.makeText(context, "Fonction de récupération en cours de développement.", Toast.LENGTH_SHORT).show()
         }
 

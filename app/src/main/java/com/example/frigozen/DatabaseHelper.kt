@@ -5,8 +5,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class DatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DatabaseHelper(appContext: Context) :
+    SQLiteOpenHelper(appContext, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
         const val DATABASE_NAME = "FrigoZen.db"
@@ -20,8 +20,9 @@ class DatabaseHelper(context: Context) :
         const val COLUMN_PASSWORD = "password"
     }
 
+    private val context = appContext // Stocker le contexte pour un usage ultérieur
+
     override fun onCreate(db: SQLiteDatabase?) {
-        // Création de la table utilisateur
         val createTableUsers = """
             CREATE TABLE $TABLE_USERS (
                 $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,12 +35,10 @@ class DatabaseHelper(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        // Mettre à jour la base de données si nécessaire
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
         onCreate(db)
     }
 
-    // Fonction pour ajouter un utilisateur
     fun insertUser(username: String, email: String, password: String): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -49,7 +48,7 @@ class DatabaseHelper(context: Context) :
         }
         return db.insert(TABLE_USERS, null, values)
     }
-    // Fonction pour vérifier si l'email n'est pas déjà existant dans la B
+
     fun isEmailExists(email: String): Boolean {
         val db = readableDatabase
         val cursor = db.query(
@@ -66,7 +65,6 @@ class DatabaseHelper(context: Context) :
         return exists
     }
 
-    // Fonction pour vérifier si un utilisateur avec le nom d'utilisateur et le mot de passe est valide
     fun isUserValid(username: String, password: String): Boolean {
         val db = readableDatabase
         val cursor = db.query(
@@ -83,7 +81,6 @@ class DatabaseHelper(context: Context) :
         return isValid
     }
 
-    // Fonction pour récupérer un utilisateur
     fun getUser(email: String): User? {
         val db = readableDatabase
         val cursor = db.query(
@@ -95,6 +92,73 @@ class DatabaseHelper(context: Context) :
             null,
             null
         )
+        return if (cursor.moveToFirst()) {
+            val user = User(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                username = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USERNAME)),
+                email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD))
+            )
+            cursor.close()
+            user
+        } else {
+            cursor.close()
+            null
+        }
+    }
+
+    fun getCurrentUser(): User? {
+        val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1)
+        if (userId == -1) {
+            return null // Aucun utilisateur connecté
+        }
+
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_USERS,
+            null,
+            "$COLUMN_ID = ?",
+            arrayOf(userId.toString()),
+            null,
+            null,
+            null
+        )
+
+        return if (cursor.moveToFirst()) {
+            val user = User(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                username = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USERNAME)),
+                email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD))
+            )
+            cursor.close()
+            user
+        } else {
+            cursor.close()
+            null
+        }
+    }
+
+    fun logoutUser() {
+        val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
+    }
+
+    fun getUserByUsername(username: String): User? {
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_USERS,
+            null,
+            "$COLUMN_USERNAME = ?",
+            arrayOf(username),
+            null,
+            null,
+            null
+        )
+
         return if (cursor.moveToFirst()) {
             val user = User(
                 id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),

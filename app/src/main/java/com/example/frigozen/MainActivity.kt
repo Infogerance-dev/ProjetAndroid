@@ -1,5 +1,6 @@
 package com.example.frigozen
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -13,16 +14,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-
-        // Masquer/afficher le BottomNavigationView selon le fragment actif
-        supportFragmentManager.addOnBackStackChangedListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
-            if (currentFragment is LoginFragment) {
-                bottomNavigationView.visibility = View.GONE
-            } else {
-                bottomNavigationView.visibility = View.VISIBLE
-            }
-        }
 
         // Configurer la navigation pour les fragments principaux
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -62,10 +53,19 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
+    // Méthode pour masquer la barre de navigation et la barre de statut
+    fun setBottomNavigationVisibility(isVisible: Boolean) {
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        bottomNavigationView.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+
+
+
     // Navigation après une connexion réussie
     fun navigateToDefaultFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.nav_host_fragment, MesListesFragment())
+            .replace(R.id.nav_host_fragment, BilanNutritifFragment())
             .commit()
     }
 }
