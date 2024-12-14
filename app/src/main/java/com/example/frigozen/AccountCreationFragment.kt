@@ -27,6 +27,7 @@ class AccountCreationFragment : Fragment() {
         databaseHelper = DatabaseHelper(requireContext())
 
         // Récupérer les vues
+        val backButton: Button = view.findViewById(R.id.buttonBackToLogin)
         val titleTextView: TextView = view.findViewById(R.id.textViewTitle)
         val accountInfoTextView: TextView = view.findViewById(R.id.textViewAccountInfo)
         val logoutButton: Button = view.findViewById(R.id.buttonLogout)
@@ -35,6 +36,13 @@ class AccountCreationFragment : Fragment() {
         val passwordField: EditText = view.findViewById(R.id.editTextPassword)
         val confirmPasswordField: EditText = view.findViewById(R.id.editTextConfirmPassword)
         val saveButton: Button = view.findViewById(R.id.buttonSavePassword)
+
+        // Gérer le clic sur le bouton "Retour"
+        backButton.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, LoginFragment())
+                .commit()
+        }
 
         // Vérifier si l'utilisateur est connecté
         isUserLoggedIn = checkUserLoggedIn()
