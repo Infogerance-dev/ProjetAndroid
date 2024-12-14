@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <!-- Image de l'aliment -->
+    <ImageView
+        android:id="@+id/alimentImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:icon="@drawable/bilan_nutritif_icon"
+        />
+
+    <!-- Nom de l'aliment -->
+    <TextView
+        android:id="@+id/tvAlimentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
+
+    <!-- espace pour que le bouton ajouter soit positionne a droite -->
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <!-- Bouton pour ajouter à la liste -->
+    <Button
+        android:id="@+id/btnAddToList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="Ajouter"
+        android:padding="8dp"/>
+</LinearLayout>
