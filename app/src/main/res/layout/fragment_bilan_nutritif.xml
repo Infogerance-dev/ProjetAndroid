@@ -1,4 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -21,17 +22,21 @@
                 android:id="@+id/etPoids"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:contentDescription="Champ de saisie pour le poids"
                 android:hint="Poids (kg)"
                 android:inputType="numberDecimal"
-                android:contentDescription="Champ de saisie pour le poids" />
+                tools:ignore="EditableContentDescCheck,TouchTargetSizeCheck" />
 
             <EditText
                 android:id="@+id/etTaille"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="textHeight"
+                android:contentDescription="Champ de saisie pour la taille"
                 android:hint="Taille (m)"
                 android:inputType="numberDecimal"
-                android:contentDescription="Champ de saisie pour la taille" />
+                tools:ignore="EditableContentDescCheck,TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/btnCalculer"

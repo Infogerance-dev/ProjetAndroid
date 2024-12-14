@@ -134,7 +134,7 @@ class BilanNutritifFragment : Fragment(layout.fragment_bilan_nutritif) {
             if (imc < 18.5) calories += 400
             if (imc > 25) calories -= 400
 
-            databaseHelper.updateHealthData(currentUserEmail, imc, calories)
+            databaseHelper.updateHealthData(imc, calories)
 
             tvIMC.text = "IMC: %.2f".format(imc)
             tvCalories.text = "Calories recommandées: %.0f".format(calories)

@@ -1,82 +1,232 @@
 package com.example.frigozen
 
+import android.content.Context
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.frigozen.ListItem
 
 class NouvelleListeFragment : Fragment(R.layout.fragment_nouvelle_liste) {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: AlimentsAdapter
-    private var isShowingCategories = true
-    private var currentCategory: String? = null
-
-    private val alimentsList = listOf(
-        Aliment("Pomme", R.drawable.bilan_nutritif_icon, "Fruits"),
-        Aliment("Banane", R.drawable.bilan_nutritif_icon, "Fruits"),
-        Aliment("Carotte", R.drawable.bilan_nutritif_icon, "Légumes"),
-        Aliment("Tomate", R.drawable.bilan_nutritif_icon, "Légumes"),
-        Aliment("Poulet", R.drawable.bilan_nutritif_icon, "Viandes")
-    )
+    private val selectedAliments = mutableListOf<Aliment>()
+    private var listName: String? = null  // Variable pour stocker le nom de la liste
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Grouper les aliments par catégorie
-        val categories = alimentsList.map { it.category }.distinct()
+        val databaseHelper = DatabaseHelper(requireContext())
+        val itemNames = selectedAliments.map { it.name }
 
-        // Configuration RecyclerView
-        recyclerView = view.findViewById(R.id.recyclerViewAliments)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        val email = "testuser@example.com"
+        val user = databaseHelper.getUser(email)
+        val userId = user?.id ?: run {
+            val username = "testuser"
+            val password = "password123"
+            databaseHelper.insertUser(username, email, password)
+        }
+
+        // Récupérer le nom de la liste à partir des arguments
+        listName = arguments?.getString("listName")
+
+        val alimentsList = listOf(
+            Aliment("Pomme", R.drawable.bilan_nutritif_icon, "Fruits", 52),
+            Aliment("Melon", R.drawable.bilan_nutritif_icon, "Fruits", 34),
+            Aliment("Banane", R.drawable.bilan_nutritif_icon, "Fruits", 89),
+            Aliment("Poire", R.drawable.bilan_nutritif_icon, "Fruits", 57),
+            Aliment("Orange", R.drawable.bilan_nutritif_icon, "Fruits", 47),
+            Aliment("Fraise", R.drawable.bilan_nutritif_icon, "Fruits", 32),
+            Aliment("Raisin", R.drawable.bilan_nutritif_icon, "Fruits", 69),
+            Aliment("Abricot", R.drawable.bilan_nutritif_icon, "Fruits", 48),
+            Aliment("Pêche", R.drawable.bilan_nutritif_icon, "Fruits", 39),
+            Aliment("Ananas", R.drawable.bilan_nutritif_icon, "Fruits", 50),
+            Aliment("Kiwi", R.drawable.bilan_nutritif_icon, "Fruits", 61),
+            Aliment("Mangue", R.drawable.bilan_nutritif_icon, "Fruits", 60),
+            Aliment("Carotte", R.drawable.bilan_nutritif_icon, "Légumes", 41),
+            Aliment("Tomate", R.drawable.bilan_nutritif_icon, "Légumes", 18),
+            Aliment("Courgette", R.drawable.bilan_nutritif_icon, "Légumes", 17),
+            Aliment("Brocoli", R.drawable.bilan_nutritif_icon, "Légumes", 34),
+            Aliment("Épinard", R.drawable.bilan_nutritif_icon, "Légumes", 23),
+            Aliment("Poivron", R.drawable.bilan_nutritif_icon, "Légumes", 20),
+            Aliment("Chou-fleur", R.drawable.bilan_nutritif_icon, "Légumes", 25),
+            Aliment("Concombre", R.drawable.bilan_nutritif_icon, "Légumes", 16),
+            Aliment("Laitue", R.drawable.bilan_nutritif_icon, "Légumes", 15),
+            Aliment("Oignon", R.drawable.bilan_nutritif_icon, "Légumes", 40),
+            Aliment("Ail", R.drawable.bilan_nutritif_icon, "Légumes", 149),
+            Aliment("Haricot vert", R.drawable.bilan_nutritif_icon, "Légumes", 31),
+            Aliment("Chou de Bruxelles", R.drawable.bilan_nutritif_icon, "Légumes", 43),
+            Aliment("Céleri", R.drawable.bilan_nutritif_icon, "Légumes", 16),
+            Aliment("Poulet", R.drawable.bilan_nutritif_icon, "Viandes", 165),
+            Aliment("Boeuf", R.drawable.bilan_nutritif_icon, "Viandes", 250),
+            Aliment("Porc", R.drawable.bilan_nutritif_icon, "Viandes", 242),
+            Aliment("Agneau", R.drawable.bilan_nutritif_icon, "Viandes", 294),
+            Aliment("Dinde", R.drawable.bilan_nutritif_icon, "Viandes", 135),
+            Aliment("Canard", R.drawable.bilan_nutritif_icon, "Viandes", 337),
+            Aliment("Saumon", R.drawable.bilan_nutritif_icon, "Poissons", 208),
+            Aliment("Thon", R.drawable.bilan_nutritif_icon, "Poissons", 132),
+            Aliment("Maquereau", R.drawable.bilan_nutritif_icon, "Poissons", 305),
+            Aliment("Truite", R.drawable.bilan_nutritif_icon, "Poissons", 148),
+            Aliment("Morue", R.drawable.bilan_nutritif_icon, "Poissons", 82),
+            Aliment("Sardine", R.drawable.bilan_nutritif_icon, "Poissons", 208),
+            Aliment("Crevette", R.drawable.bilan_nutritif_icon, "Poissons", 99),
+            Aliment("Homard", R.drawable.bilan_nutritif_icon, "Poissons", 77),
+            Aliment("Crabe", R.drawable.bilan_nutritif_icon, "Poissons", 97),
+            Aliment("Tofu", R.drawable.bilan_nutritif_icon, "Protéines végétales", 76),
+            Aliment("Tempeh", R.drawable.bilan_nutritif_icon, "Protéines végétales", 193),
+            Aliment("Lentilles", R.drawable.bilan_nutritif_icon, "Légumineuses", 116),
+            Aliment("Pois chiches", R.drawable.bilan_nutritif_icon, "Légumineuses", 164),
+            Aliment("Haricots rouges", R.drawable.bilan_nutritif_icon, "Légumineuses", 127),
+            Aliment("Edamame", R.drawable.bilan_nutritif_icon, "Légumineuses", 121),
+            Aliment("Chia", R.drawable.bilan_nutritif_icon, "Graines", 486),
+            Aliment("Lin", R.drawable.bilan_nutritif_icon, "Graines", 534),
+            Aliment("Tournesol", R.drawable.bilan_nutritif_icon, "Graines", 584),
+            Aliment("Courge", R.drawable.bilan_nutritif_icon, "Légumes", 26),
+            Aliment("Amandes", R.drawable.bilan_nutritif_icon, "Fruits secs", 579),
+            Aliment("Noix", R.drawable.bilan_nutritif_icon, "Fruits secs", 654),
+            Aliment("Pistaches", R.drawable.bilan_nutritif_icon, "Fruits secs", 562),
+            Aliment("Noisettes", R.drawable.bilan_nutritif_icon, "Fruits secs", 628)
         )
 
-        // Adapter initial
-        adapter = AlimentsAdapter(emptyList()) { item ->
-            if (isShowingCategories) {
-                // Passer à l'affichage des aliments
-                currentCategory = item as String
-                updateRecyclerViewForCategory(item)
+        fun showAddToListDialog(context: Context, aliment: Aliment) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Quantité à ajouter")
+
+            val layout = LinearLayout(context)
+            layout.orientation = LinearLayout.VERTICAL
+
+            // EditText pour la quantité
+            val quantityInput = EditText(context)
+            quantityInput.inputType = InputType.TYPE_CLASS_NUMBER
+            quantityInput.hint = "Quantité (entier)"
+            layout.addView(quantityInput)
+
+            val radioGroup = RadioGroup(context)
+            radioGroup.orientation = RadioGroup.HORIZONTAL
+
+            val grammesRadioButton = RadioButton(context)
+            grammesRadioButton.text = "Grammes"
+            grammesRadioButton.id = View.generateViewId()
+            grammesRadioButton.isChecked = true // Par défaut, on choisit les grammes
+
+            val kilosRadioButton = RadioButton(context)
+            kilosRadioButton.text = "Kilogrammes"
+            kilosRadioButton.id = View.generateViewId()
+
+            radioGroup.addView(grammesRadioButton)
+            radioGroup.addView(kilosRadioButton)
+
+            layout.addView(radioGroup)
+
+            builder.setView(layout)
+
+            builder.setPositiveButton("Ajouter") { _, _ ->
+                val quantityText = quantityInput.text.toString()
+                if (quantityText.isNotEmpty() && quantityText.toIntOrNull() != null) {
+                    var quantity = quantityText.toInt()
+                    val selectedUnit = when (radioGroup.checkedRadioButtonId) {
+                        grammesRadioButton.id -> "Grammes"
+                        kilosRadioButton.id -> {
+                            // Convertir les kilogrammes en grammes
+                            quantity *= 1000
+                            "Kilogrammes (converti en grammes)"
+                        }
+                        else -> {
+                            Toast.makeText(context, "Veuillez sélectionner une unité.", Toast.LENGTH_SHORT).show()
+                            return@setPositiveButton
+                        }
+                    }
+
+                    if (quantity > 0) {
+                        // Calculer les calories ajustées
+                        val adjustedCalories = (quantity / 100.0 * aliment.calories).toInt()
+
+                        // Ajouter l'aliment avec les calories ajustées à la liste
+                        selectedAliments.add(aliment.copy(quantity = quantity, calories = adjustedCalories))
+
+                        Toast.makeText(
+                            context,
+                            "Ajouté: ${aliment.name}, Quantité: $quantity g, Calories: $adjustedCalories kcal",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(context, "La quantité doit être positive", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(context, "Veuillez entrer une quantité valide", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            builder.setNegativeButton("Annuler") { dialog, _ -> dialog.cancel() }
+            builder.show()
+        }
+
+
+
+        // Grouper les aliments par catégorie
+        val groupedAliments = alimentsList.groupBy { it.category }
+
+        // Créer une liste mixte contenant des catégories et des aliments
+        val items = mutableListOf<ListItem>()
+        groupedAliments.forEach { (category, aliments) ->
+            items.add(ListItem.Category(category))
+            items.addAll(aliments.map { ListItem.AlimentItem(it) })
+        }
+
+        // Initialisation de la RecyclerView
+        recyclerView = view.findViewById(R.id.recyclerViewAliments)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = AlimentAdapter(requireContext(), items) { aliment ->
+            showAddToListDialog(requireContext(), aliment)
+        }
+
+        // Bouton "V" en bas à droite
+        val btnOkList = view.findViewById<Button>(R.id.btnOkList)
+        btnOkList.setOnClickListener {
+            if (listName.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Veuillez entrer un nom pour la liste.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (selectedAliments.isEmpty()) {
+                Toast.makeText(requireContext(), "Veuillez sélectionner au moins un aliment.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val userId = 1 // ID utilisateur temporaire
+            val listAliments: List<ListAliment> = selectedAliments.map { aliment ->
+                ListAliment(aliment.name, aliment.quantity, aliment.calories)
+            }
+
+            val listId = databaseHelper.insertShoppingList(userId, listName!!, listAliments)
+
+            if (listId != -1L) {
+                Toast.makeText(requireContext(), "Liste $listName créée avec succès !", Toast.LENGTH_SHORT).show()
+                (activity as MainActivity).loadFragment(MesListesFragment()) // Naviguer vers les listes
             } else {
-                // Action sur un aliment sélectionné
-                val aliment = item as Aliment
-                Toast.makeText(requireContext(), "${aliment.name} sélectionné.", Toast.LENGTH_SHORT).show()
-            }
-        }
-        recyclerView.adapter = adapter
-
-        // Afficher uniquement les catégories au départ
-        updateRecyclerViewForCategories(categories)
-
-        // Bouton de retour
-        view.findViewById<Button>(R.id.btnOkList).apply {
-            text = "Retour"
-            visibility = View.GONE
-            setOnClickListener {
-                updateRecyclerViewForCategories(categories)
-                isShowingCategories = true
-                visibility = View.GONE
+                Toast.makeText(requireContext(), "Erreur lors de la création de la liste.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun updateRecyclerViewForCategories(categories: List<String>) {
-        adapter.updateItems(categories)
-        isShowingCategories = true
-        recyclerView.adapter = adapter
-    }
+    private fun showSelectedAliments() {
+        if (selectedAliments.isEmpty()) {
+            Toast.makeText(requireContext(), "Aucun aliment sélectionné.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-    private fun updateRecyclerViewForCategory(category: String) {
-        val alimentsInCategory = alimentsList.filter { it.category == category }
-        adapter.updateItems(alimentsInCategory)
-        isShowingCategories = false
-        view?.findViewById<Button>(R.id.btnOkList)?.visibility = View.VISIBLE
+        val selectedNames = selectedAliments.joinToString(", ") { it.name }
+        Toast.makeText(requireContext(), "Aliments ajoutés à $listName : $selectedNames", Toast.LENGTH_LONG).show()
+
+        (activity as MainActivity).loadFragment(MesListesFragment())
     }
 }
-
