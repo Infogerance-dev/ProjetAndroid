@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_meslistes"
+        android:icon="@drawable/mes_listes_icon"
+        android:title="Mes listes" />
+    <item
+        android:id="@+id/nav_nouvelleliste"
+        android:icon="@drawable/nouvelle_liste_icon"
+        android:title="Nouvelle liste" />
+    <item
+        android:id="@+id/nav_bilannutritif"
+        android:icon="@drawable/bilan_nutritif_icon"
+        android:title="Bilan Nutritif" />
+    <item
+        android:id="@+id/nav_compte"
+        android:icon="@drawable/compte_icon"
+        android:title="Compte" />
+</menu>
