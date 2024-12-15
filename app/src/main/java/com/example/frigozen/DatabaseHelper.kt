@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 
 class DatabaseHelper(appContext: Context) :
     SQLiteOpenHelper(appContext, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -37,6 +38,12 @@ class DatabaseHelper(appContext: Context) :
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
         onCreate(db)
+    }
+    fun saveUserSession(userId: Int) {
+        val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("id", userId)
+        editor.apply()
     }
 
     fun insertUser(username: String, email: String, password: String): Long {
@@ -109,10 +116,13 @@ class DatabaseHelper(appContext: Context) :
 
     fun getCurrentUser(): User? {
         val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
-        val userId = sharedPreferences.getInt("user_id", -1)
+        val userId = sharedPreferences.getInt("id", -1)
         if (userId == -1) {
+            Log.d("AccountCreationFragment", "Fonction GetCurrentUser ne marche pas")
             return null // Aucun utilisateur connecté
         }
+
+        Log.d("AccountCreationFragment", "Fonction GetCurrentUser marche ")
 
         val db = readableDatabase
         val cursor = db.query(
@@ -174,6 +184,7 @@ class DatabaseHelper(appContext: Context) :
         }
     }
 }
+
 
 // Classe pour représenter un utilisateur
 data class User(
