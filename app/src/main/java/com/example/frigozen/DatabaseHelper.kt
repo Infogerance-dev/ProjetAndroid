@@ -39,6 +39,8 @@ class DatabaseHelper(appContext: Context) :
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
         onCreate(db)
     }
+
+    // Enregistrer la session utilisateur dans les SharedPreferences
     fun saveUserSession(userId: Int) {
         val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -46,6 +48,7 @@ class DatabaseHelper(appContext: Context) :
         editor.apply()
     }
 
+    // Insérer un nouvel utilisateur dans la base de données
     fun insertUser(username: String, email: String, password: String): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -56,6 +59,7 @@ class DatabaseHelper(appContext: Context) :
         return db.insert(TABLE_USERS, null, values)
     }
 
+    // Vérifier si un email existe déjà
     fun isEmailExists(email: String): Boolean {
         val db = readableDatabase
         val cursor = db.query(
@@ -72,6 +76,7 @@ class DatabaseHelper(appContext: Context) :
         return exists
     }
 
+    // Vérifier si les identifiants utilisateur sont valides
     fun isUserValid(username: String, password: String): Boolean {
         val db = readableDatabase
         val cursor = db.query(
@@ -88,6 +93,7 @@ class DatabaseHelper(appContext: Context) :
         return isValid
     }
 
+    // Récupérer un utilisateur à partir de son email
     fun getUser(email: String): User? {
         val db = readableDatabase
         val cursor = db.query(
@@ -114,22 +120,26 @@ class DatabaseHelper(appContext: Context) :
         }
     }
 
+    // Récupérer l'utilisateur actuellement connecté
     fun getCurrentUser(): User? {
+        // Vérification des SharedPreferences
         val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getInt("id", -1)
+
         if (userId == -1) {
-            Log.d("AccountCreationFragment", "Fonction GetCurrentUser ne marche pas")
-            return null // Aucun utilisateur connecté
+            Log.d("DatabaseHelper", "Aucun utilisateur connecté : ID inexistant dans SharedPreferences.")
+            return null
         }
 
-        Log.d("AccountCreationFragment", "Fonction GetCurrentUser marche ")
+        Log.d("DatabaseHelper", "ID utilisateur récupéré des SharedPreferences : $userId")
 
+        // Requête pour récupérer l'utilisateur dans la base de données
         val db = readableDatabase
         val cursor = db.query(
             TABLE_USERS,
-            null,
-            "$COLUMN_ID = ?",
-            arrayOf(userId.toString()),
+            null, // Toutes les colonnes
+            "$COLUMN_ID = ?", // Condition WHERE pour rechercher par ID
+            arrayOf(userId.toString()), // Paramètre de recherche
             null,
             null,
             null
@@ -142,14 +152,17 @@ class DatabaseHelper(appContext: Context) :
                 email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
                 password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD))
             )
+            Log.d("DatabaseHelper", "Utilisateur trouvé dans la base de données : ${user.username}")
             cursor.close()
             user
         } else {
+            Log.d("DatabaseHelper", "Aucun utilisateur trouvé dans la base pour ID : $userId")
             cursor.close()
             null
         }
     }
 
+    // Déconnexion de l'utilisateur
     fun logoutUser() {
         val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -157,6 +170,7 @@ class DatabaseHelper(appContext: Context) :
         editor.apply()
     }
 
+    // Rechercher un utilisateur par son nom d'utilisateur
     fun getUserByUsername(username: String): User? {
         val db = readableDatabase
         val cursor = db.query(
@@ -184,7 +198,6 @@ class DatabaseHelper(appContext: Context) :
         }
     }
 }
-
 
 // Classe pour représenter un utilisateur
 data class User(

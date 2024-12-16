@@ -74,7 +74,7 @@
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/textViewAccountInfo"
+            android:id="@+id/textViewAccountCreation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"

@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.util.Log
+import android.widget.LinearLayout
 
 
 class AccountCreationFragment : Fragment() {
@@ -31,7 +32,7 @@ class AccountCreationFragment : Fragment() {
 
         // Récupérer les vues
         val backButton: Button = view.findViewById(R.id.buttonBackToLogin)
-        val titleTextView: TextView = view.findViewById(R.id.textViewTitle)
+        val accountInfoContainer: LinearLayout = view.findViewById(R.id.accountInfoContainer)
         val accountInfoTextView: TextView = view.findViewById(R.id.textViewAccountInfo)
         val logoutButton: Button = view.findViewById(R.id.buttonLogout)
         val usernameField: EditText = view.findViewById(R.id.editTextUsername)
@@ -39,7 +40,7 @@ class AccountCreationFragment : Fragment() {
         val passwordField: EditText = view.findViewById(R.id.editTextPassword)
         val confirmPasswordField: EditText = view.findViewById(R.id.editTextConfirmPassword)
         val saveButton: Button = view.findViewById(R.id.buttonSavePassword)
-
+        val accountCreationContainer: LinearLayout = view.findViewById(R.id.accountCreationContainer)
         // Gérer le clic sur le bouton "Retour"
         backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -53,14 +54,10 @@ class AccountCreationFragment : Fragment() {
         if (isUserLoggedIn) {
             Log.d("AccountCreationFragment", "L'utilisateur est connecté. Configuration de l'état connecté.")
             // Afficher les informations de l'utilisateur connecté
-            titleTextView.visibility = View.GONE
-            usernameField.visibility = View.GONE
-            emailField.visibility = View.GONE
-            passwordField.visibility = View.GONE
-            confirmPasswordField.visibility = View.GONE
-            saveButton.visibility = View.GONE
+            accountCreationContainer.visibility = View.GONE
 
-            accountInfoTextView.visibility = View.VISIBLE
+
+            accountInfoContainer.visibility = View.VISIBLE
             logoutButton.visibility = View.VISIBLE
 
             // Récupérer les informations de l'utilisateur connecté
@@ -80,7 +77,6 @@ class AccountCreationFragment : Fragment() {
         } else {
             Log.d("AccountCreationFragment", "L'utilisateur n'est pas connecté. Configuration de l'état de création de compte.")
             // Afficher les éléments pour la création de compte
-            titleTextView.visibility = View.VISIBLE
             usernameField.visibility = View.VISIBLE
             emailField.visibility = View.VISIBLE
             passwordField.visibility = View.VISIBLE
@@ -109,6 +105,7 @@ class AccountCreationFragment : Fragment() {
                 } else {
                     // Enregistrement dans SQLite
                     val userId = databaseHelper.insertUser(username, email, password)
+                    databaseHelper.saveUserSession(userId.toInt())
                     if (userId > 0) {
                         Toast.makeText(context, "Compte créé avec succès !", Toast.LENGTH_SHORT).show()
 
