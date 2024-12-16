@@ -64,6 +64,7 @@ class LoginFragment : Fragment() {
                 val editor = sharedPreferences.edit()
                 editor.putString("username", username)
                 editor.putBoolean("is_logged_in", true)
+                editor.putInt("id", id)
                 editor.apply()
 
                 // Cacher le BottomNavigationView
