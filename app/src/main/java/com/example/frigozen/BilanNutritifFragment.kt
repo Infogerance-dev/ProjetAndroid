@@ -39,7 +39,7 @@ class BilanNutritifFragment : Fragment(layout.fragment_bilan_nutritif) {
         // Charger les données utilisateur
         val user = databaseHelper.getUser(currentUserEmail)
 
-        if (user != null && user.imc != null && user.calories != null) {
+        if (user != null && user.imc != null && user.caloriesPerDay != null) {
             displayUserData(user, tvIMC, tvCalories, etPoids, etTaille, btnCalculer, progressBar)
         } else {
             setupInputView(tvIMC, tvCalories, etPoids, etTaille, btnCalculer)
@@ -72,8 +72,8 @@ class BilanNutritifFragment : Fragment(layout.fragment_bilan_nutritif) {
         btnCalculer.visibility = View.GONE
 
         tvIMC.text = "IMC: %.2f".format(user.imc)
-        tvCalories.text = "Calories recommandées: %.0f".format(user.calories)
-        progressBar.max = user.calories!!.toInt()
+        tvCalories.text = "Calories recommandées: %.0f".format(user.caloriesPerDay)
+        progressBar.max = user.caloriesPerDay!!.toInt()
     }
 
     private fun setupInputView(
@@ -134,7 +134,7 @@ class BilanNutritifFragment : Fragment(layout.fragment_bilan_nutritif) {
             if (imc < 18.5) calories += 400
             if (imc > 25) calories -= 400
 
-            databaseHelper.updateHealthData(imc, calories)
+            databaseHelper.updateHealthData(id, imc, calories)
 
             tvIMC.text = "IMC: %.2f".format(imc)
             tvCalories.text = "Calories recommandées: %.0f".format(calories)
