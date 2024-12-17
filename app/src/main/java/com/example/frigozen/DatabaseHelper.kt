@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.getFloatOrNull
 import android.os.Parcelable
 import android.util.Log
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -23,6 +23,8 @@ class DatabaseHelper(context: Context) :
         const val COLUMN_USERNAME = "username"
         const val COLUMN_EMAIL = "email"
         const val COLUMN_PASSWORD = "password"
+        const val COLUMN_IMC = "imc"
+        const val COLUMN_CALPERDAY = "caloriesPerDay"
 
         // Table listes de courses
         const val TABLE_SHOPPING_LISTS = "shopping_lists"
@@ -37,13 +39,6 @@ class DatabaseHelper(context: Context) :
         const val COLUMN_ITEM_QUANTITY = "quantity"
         const val COLUMN_ITEM_CALORIES = "calories"
         const val COLUMN_ITEM_LIST_ID = "shopping_list_id"
-
-        // Table IMC
-        const val TABLE_IMC = "lists_imc"
-        const val COLUMN_IMC_ID = "id"
-        const val COLUMN_IMC = "imc"
-        const val COLUMN_CALPERDAY = "caloriesPerDay"
-        const val COLUMN_LIST_USER_ID2 = "user_id"
         }
 
 
@@ -51,9 +46,10 @@ class DatabaseHelper(context: Context) :
         // Création de la table utilisateur
         val createTableUsers = """
             CREATE TABLE $TABLE_USERS (
-
                 $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COLUMN_USERNAME TEXT NOT NULL,
+                $COLUMN_IMC REAL,
+                $COLUMN_CALPERDAY INTEGER NOT NULL, 
                 $COLUMN_EMAIL UNIQUE NOT NULL,
                 $COLUMN_PASSWORD TEXT NOT NULL
             )
@@ -81,19 +77,9 @@ class DatabaseHelper(context: Context) :
             )
         """.trimIndent()
 
-        // Création de la table IMC
-        val createTableIMC = """
-            CREATE TABLE $TABLE_IMC (
-                $COLUMN_IMC_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                $COLUMN_IMC REAL,
-                $COLUMN_CALPERDAY INTEGER NOT NULL,   -- Nouvelle colonne pour les calories
-                FOREIGN KEY ($COLUMN_LIST_USER_ID2) REFERENCES $TABLE_USERS($COLUMN_ID)            )
-        """.trimIndent()
-
         db?.execSQL(createTableUsers)
         db?.execSQL(createTableShoppingLists)
         db?.execSQL(createTableListItems)
-        db?.execSQL(createTableIMC)
     }
 
 
@@ -103,7 +89,6 @@ class DatabaseHelper(context: Context) :
             db?.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
             db?.execSQL("DROP TABLE IF EXISTS $TABLE_SHOPPING_LISTS")
             db?.execSQL("DROP TABLE IF EXISTS $TABLE_LIST_ITEMS")
-            db?.execSQL("DROP TABLE IF EXISTS $TABLE_IMC")
             onCreate(db)
         }
     }
@@ -154,8 +139,9 @@ class DatabaseHelper(context: Context) :
                 email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
                 password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
                 imc = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_IMC)),
-                calories = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_CALPERDAY))
+                caloriesPerDay = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_CALPERDAY))
             )
+
             cursor.close()
             user
         } else {
@@ -269,18 +255,16 @@ class DatabaseHelper(context: Context) :
         return items
     }
 
-    fun updateHealthData(imc: Float, caloriesPerDay: Float) {
+    fun updateHealthData(userId: Int, imc: Float, caloriesPerDay: Float) {
         val db = writableDatabase
-        val values = ContentValues()
-        values.put(COLUMN_IMC, imc)
-        values.put(COLUMN_CALPERDAY, caloriesPerDay)
-
-        val rowsUpdated = db.update(TABLE_IMC, values, "$COLUMN_IMC = ?", arrayOf(imc.toString()) )
-        if (rowsUpdated == 0) {
-            values.put(COLUMN_IMC, imc)
-            db.insert(TABLE_IMC, null, values)
+        val values = ContentValues().apply {
+            put(COLUMN_IMC, imc)
+            put(COLUMN_CALPERDAY, caloriesPerDay)
         }
+
+        db.update(TABLE_USERS, values, "$COLUMN_ID = ?", arrayOf(userId.toString()))
     }
+
 
     private fun Cursor.getFloatOrNull(columnName: String): Float? {
         val index = getColumnIndex(columnName)
@@ -296,8 +280,8 @@ data class User(
     val username: String,
     val email: String,
     val password: String,
-    val imc : Float?,
-    val calories : Float?
+    val imc: Float?,
+    val caloriesPerDay: Float?,
 )
 
 @Parcelize
