@@ -93,6 +93,8 @@ class DatabaseHelper(appContext: Context) :
             onCreate(db)
         }
     }
+
+    // Enregistrer la session utilisateur dans les SharedPreferences
     fun saveUserSession(userId: Int) {
         val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -100,6 +102,7 @@ class DatabaseHelper(appContext: Context) :
         editor.apply()
     }
 
+    // Insérer un nouvel utilisateur dans la base de données
     // Fonction pour ajouter un utilisateur
     fun insertUser(username: String, email: String, password: String): Long {
         val db = writableDatabase
@@ -110,6 +113,8 @@ class DatabaseHelper(appContext: Context) :
         }
         return db.insert(TABLE_USERS, null, values)
     }
+
+    // Vérifier si un email existe déjà
     // Fonction pour vérifier si l'email n'est pas déjà existant dans la B
     fun isEmailExists(email: String): Boolean {
         val db = readableDatabase
@@ -127,6 +132,7 @@ class DatabaseHelper(appContext: Context) :
         return exists
     }
 
+    // Vérifier si les identifiants utilisateur sont valides
     // Fonction pour vérifier si l'utilisateur est connecté
     fun isUserValid(username: String, password: String): Boolean {
         val db = readableDatabase
@@ -144,6 +150,7 @@ class DatabaseHelper(appContext: Context) :
         return isValid
     }
 
+    // Récupérer un utilisateur à partir de son email
     // Fonction pour récupérer un utilisateur
     fun getUser(email: String): User? {
         val db = readableDatabase
@@ -221,9 +228,12 @@ class DatabaseHelper(appContext: Context) :
         return listId
     }
 
+    // Récupérer l'utilisateur actuellement connecté
     fun getCurrentUser(): User? {
+        // Vérification des SharedPreferences
         val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getInt("id", -1)
+
         if (userId == -1) {
             Log.d("AccountCreationFragment", "Fonction GetCurrentUser ne marche pas")
             return null // Aucun utilisateur connecté
@@ -231,12 +241,13 @@ class DatabaseHelper(appContext: Context) :
 
         Log.d("AccountCreationFragment", "Fonction GetCurrentUser marche ")
 
+        // Requête pour récupérer l'utilisateur dans la base de données
         val db = readableDatabase
         val cursor = db.query(
             TABLE_USERS,
-            null,
-            "$COLUMN_ID = ?",
-            arrayOf(userId.toString()),
+            null, // Toutes les colonnes
+            "$COLUMN_ID = ?", // Condition WHERE pour rechercher par ID
+            arrayOf(userId.toString()), // Paramètre de recherche
             null,
             null,
             null
@@ -251,9 +262,11 @@ class DatabaseHelper(appContext: Context) :
                 imc = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_IMC)),
                 caloriesPerDay = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_CALPERDAY))
             )
+            Log.d("DatabaseHelper", "Utilisateur trouvé dans la base de données : ${user.username}")
             cursor.close()
             user
         } else {
+            Log.d("DatabaseHelper", "Aucun utilisateur trouvé dans la base pour ID : $userId")
             cursor.close()
             null
         }
@@ -288,6 +301,7 @@ class DatabaseHelper(appContext: Context) :
         return shoppingLists
     }
 
+    // Déconnexion de l'utilisateur
     fun logoutUser() {
         val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
