@@ -10,8 +10,8 @@ import android.os.Parcelable
 import android.util.Log
 import kotlinx.parcelize.Parcelize
 
-class DatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DatabaseHelper(appContext: Context) :
+    SQLiteOpenHelper(appContext, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
         const val DATABASE_NAME = "FrigoZen.db"
@@ -41,6 +41,7 @@ class DatabaseHelper(context: Context) :
         const val COLUMN_ITEM_LIST_ID = "shopping_list_id"
         }
 
+    private val context = appContext // Stocker le contexte pour un usage ultérieur
 
     override fun onCreate(db: SQLiteDatabase?) {
         // Création de la table utilisateur
@@ -49,7 +50,7 @@ class DatabaseHelper(context: Context) :
                 $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COLUMN_USERNAME TEXT NOT NULL,
                 $COLUMN_IMC REAL,
-                $COLUMN_CALPERDAY INTEGER NOT NULL, 
+                $COLUMN_CALPERDAY INTEGER, 
                 $COLUMN_EMAIL UNIQUE NOT NULL,
                 $COLUMN_PASSWORD TEXT NOT NULL
             )
@@ -92,6 +93,12 @@ class DatabaseHelper(context: Context) :
             onCreate(db)
         }
     }
+    fun saveUserSession(userId: Int) {
+        val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("id", userId)
+        editor.apply()
+    }
 
     // Fonction pour ajouter un utilisateur
     fun insertUser(username: String, email: String, password: String): Long {
@@ -118,6 +125,23 @@ class DatabaseHelper(context: Context) :
         val exists = cursor.count > 0
         cursor.close()
         return exists
+    }
+
+    // Fonction pour vérifier si l'utilisateur est connecté
+    fun isUserValid(username: String, password: String): Boolean {
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_USERS,
+            arrayOf(COLUMN_ID),
+            "$COLUMN_USERNAME = ? AND $COLUMN_PASSWORD = ?",
+            arrayOf(username, password),
+            null,
+            null,
+            null
+        )
+        val isValid = cursor.count > 0
+        cursor.close()
+        return isValid
     }
 
     // Fonction pour récupérer un utilisateur
@@ -197,6 +221,43 @@ class DatabaseHelper(context: Context) :
         return listId
     }
 
+    fun getCurrentUser(): User? {
+        val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("id", -1)
+        if (userId == -1) {
+            Log.d("AccountCreationFragment", "Fonction GetCurrentUser ne marche pas")
+            return null // Aucun utilisateur connecté
+        }
+
+        Log.d("AccountCreationFragment", "Fonction GetCurrentUser marche ")
+
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_USERS,
+            null,
+            "$COLUMN_ID = ?",
+            arrayOf(userId.toString()),
+            null,
+            null,
+            null
+        )
+
+        return if (cursor.moveToFirst()) {
+            val user = User(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                username = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USERNAME)),
+                email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
+                imc = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_IMC)),
+                caloriesPerDay = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_CALPERDAY))
+            )
+            cursor.close()
+            user
+        } else {
+            cursor.close()
+            null
+        }
+    }
     fun getShoppingListsByUser(userId: Int): List<ShoppingList> {
         val db = readableDatabase
         val shoppingLists = mutableListOf<ShoppingList>()
@@ -227,6 +288,12 @@ class DatabaseHelper(context: Context) :
         return shoppingLists
     }
 
+    fun logoutUser() {
+        val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
+    }
 
     fun getItemsByListId(listId: Int): List<ListAliment> {
         val db = readableDatabase
@@ -262,9 +329,38 @@ class DatabaseHelper(context: Context) :
             put(COLUMN_CALPERDAY, caloriesPerDay)
         }
 
+
         db.update(TABLE_USERS, values, "$COLUMN_ID = ?", arrayOf(userId.toString()))
     }
 
+    fun getUserByUsername(username: String): User? {
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_USERS,
+            null,
+            "$COLUMN_USERNAME = ?",
+            arrayOf(username),
+            null,
+            null,
+            null
+        )
+
+        return if (cursor.moveToFirst()) {
+            val user = User(
+                id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                username = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USERNAME)),
+                email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
+                imc = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_IMC)),
+                caloriesPerDay = cursor.getFloatOrNull(cursor.getColumnIndexOrThrow(COLUMN_CALPERDAY))
+            )
+            cursor.close()
+            user
+        } else {
+            cursor.close()
+            null
+        }
+    }
 
     private fun Cursor.getFloatOrNull(columnName: String): Float? {
         val index = getColumnIndex(columnName)

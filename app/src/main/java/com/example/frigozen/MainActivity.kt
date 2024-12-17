@@ -1,8 +1,10 @@
 package com.example.frigozen
 
+import android.os.Build
 import android.os.Bundle
 import android.Manifest
 import android.content.pm.PackageManager
+import android.view.View
 import android.text.InputType
 import android.widget.EditText
 import android.widget.Toast
@@ -11,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.frigozen.BilanNutritifFragment
+import com.example.frigozen.MesListesFragment
+import com.example.frigozen.AccountCreationFragment
+import com.example.frigozen.NouvelleListeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.frigozen.R
 
@@ -41,6 +47,8 @@ class MainActivity : AppCompatActivity() {
 
         // Initialisation de la barre de navigation
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+
+        // Configurer la navigation pour les fragments principaux
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_meslistes -> {
@@ -57,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_compte -> {
-                    loadFragment(MonCompteFragment())  // Remplacez par le fragment Profile
+                    loadFragment(AccountCreationFragment())  // Remplacez par le fragment Profile
                     true
                 }
                 R.id.nav_bilannutritif -> {
@@ -71,12 +79,16 @@ class MainActivity : AppCompatActivity() {
         // Charger le fragment par défaut au démarrage
         if (savedInstanceState == null) {
             loadFragment(BilanNutritifFragment())  // Le fragment BilanNutritif s'affichera au démarrage
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, LoginFragment())
+                .commit()
         }
     }
 
     fun loadFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.nav_host_fragment, fragment)
+        transaction.addToBackStack(null)
         transaction.commit()
     }
 
@@ -130,6 +142,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         builder.show()  // Affiche la boîte de dialogue
+    }
+    // Méthode pour masquer la barre de navigation et la barre de statut
+    fun setBottomNavigationVisibility(isVisible: Boolean) {
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        bottomNavigationView.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+
+
+
+    // Navigation après une connexion réussie
+    fun navigateToDefaultFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host_fragment, BilanNutritifFragment())
+            .commit()
     }
 }
 
