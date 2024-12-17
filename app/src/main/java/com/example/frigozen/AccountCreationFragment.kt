@@ -41,6 +41,9 @@ class AccountCreationFragment : Fragment() {
         val confirmPasswordField: EditText = view.findViewById(R.id.editTextConfirmPassword)
         val saveButton: Button = view.findViewById(R.id.buttonSavePassword)
         val accountCreationContainer: LinearLayout = view.findViewById(R.id.accountCreationContainer)
+        val showedUsername: TextView = view.findViewById((R.id.textViewUsername))
+        val showedEmail: TextView = view.findViewById(R.id.textViewEmail)
+
         // Gérer le clic sur le bouton "Retour"
         backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -63,6 +66,8 @@ class AccountCreationFragment : Fragment() {
             // Récupérer les informations de l'utilisateur connecté
             val user = databaseHelper.getCurrentUser()
             accountInfoTextView.text = "Bienvenue, ${user?.username} !"
+            showedUsername.text = "Nom : ${user?.username}"
+            showedEmail.text = "Email : ${user?.email}"
 
             // Gestion du bouton de déconnexion
             logoutButton.setOnClickListener {

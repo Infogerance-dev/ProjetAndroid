@@ -99,6 +99,7 @@ class DatabaseHelper(appContext: Context) :
         val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putInt("id", userId)
+        Log.d("test de la fonction", "Insertion de l'userId dans les SharedPreferences")
         editor.apply()
     }
 
