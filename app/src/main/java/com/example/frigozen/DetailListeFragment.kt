@@ -49,11 +49,8 @@ class DetailListeFragment : Fragment() {
         // Configurer le bouton de retour en arrière
         val backButton: View = view.findViewById(R.id.backButton)
         backButton.setOnClickListener {
-            // Appel de la méthode dans le fragment parent pour réafficher le RecyclerView
-            (parentFragment as? MesListesFragment)?.onBackPressed()
+            (activity as MainActivity).loadFragment(MesListesFragment())
 
-            // Retourner dans la pile des fragments
-            parentFragmentManager.popBackStack()
         }
 
         return view

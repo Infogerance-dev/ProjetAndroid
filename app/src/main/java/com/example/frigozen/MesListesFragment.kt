@@ -45,11 +45,4 @@ class MesListesFragment : Fragment(R.layout.fragment_mes_listes) {
 
         recyclerView.adapter = adapter
     }
-
-    // Cette méthode permet de réafficher RecyclerView et cacher le FrameLayout
-    fun onBackPressed() {
-        fragmentContainer.visibility = View.GONE
-        recyclerView.visibility = View.VISIBLE
-
-    }
 }
