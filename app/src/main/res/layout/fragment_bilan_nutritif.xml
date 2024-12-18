@@ -16,7 +16,7 @@
         <LinearLayout
             android:id="@+id/llUserInput"
             android:layout_width="match_parent"
-            android:layout_height="550dp"
+            android:layout_height="480dp"
             android:orientation="vertical"
             android:visibility="visible">
 
