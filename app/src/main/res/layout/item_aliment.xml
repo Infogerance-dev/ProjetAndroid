@@ -38,5 +38,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
-        android:text="Ajouter" />
+        android:text="Ajouter"
+        android:backgroundTint="@color/Button"/>
 </LinearLayout>
