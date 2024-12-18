@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/app_background"
+    android:padding="16dp"
+    android:paddingLeft="16dp"
+    android:paddingTop="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp"
     tools:context=".AccountCreationFragment">
 
     <!-- Conteneur pour les informations de l'utilisateur connecté -->
@@ -20,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bienvenue, utilisateur !"
-            android:textSize="18sp"
+            android:textSize="45dp"
             android:textAlignment="center"
             android:layout_marginBottom="16dp" />
 
@@ -29,7 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nom d'utilisateur"
-            android:textSize="45dp" />
+            android:textSize="45dp"
+            android:background="@android:color/transparent"/>
 
         <TextView
             android:id="@+id/textViewEmail"
@@ -43,14 +50,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Modifier le mot de passe"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/Button"/>
 
         <Button
             android:id="@+id/buttonLogout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Se déconnecter"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/Button"/>
     </LinearLayout>
 
     <!-- Conteneur pour le formulaire de création de compte -->
@@ -71,6 +80,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"
             android:text="Créer un compte"
+            android:textStyle="bold"
             android:textSize="24sp" />
 
         <TextView
@@ -78,9 +88,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Complétez ces informations puis cliquez sur le bouton (SE CONNECTER) afin de crée votre compte."
+            android:text="Complétez ces informations puis cliquez sur le bouton 'SE CONNECTER' afin de crée votre compte."
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="15dp"
+            android:textStyle="italic"
+            android:textColor="@color/black"/>
 
         <EditText
             android:id="@+id/editTextUsername"
@@ -125,14 +137,16 @@
                 android:id="@+id/buttonSavePassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SE CONNECTER" />
+                android:text="SE CONNECTER"
+                android:backgroundTint="@color/Button"/>
 
             <Button
                 android:id="@+id/buttonBackToLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Retour" />
+                android:text="Retour"
+                android:backgroundTint="@color/Button"/>
         </LinearLayout>
     </LinearLayout>
 

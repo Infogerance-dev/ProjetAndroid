@@ -2,19 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/app_background">
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <!-- Section Entrée utilisateur -->
         <LinearLayout
             android:id="@+id/llUserInput"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="600dp"
             android:orientation="vertical"
             android:visibility="visible">
 
@@ -43,8 +45,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Calculer"
-                android:contentDescription="Bouton pour calculer l'IMC et les calories recommandées" />
+                android:backgroundTint="@color/Button"
+                android:contentDescription="Bouton pour calculer l'IMC et les calories recommandées"
+                android:text="Calculer" />
         </LinearLayout>
 
         <!-- Section Résultats -->
@@ -85,14 +88,19 @@
                 android:contentDescription="Barre de progression indiquant la proportion des calories atteintes" />
         </LinearLayout>
 
+
         <!-- Section Notifications -->
         <Button
             android:id="@+id/btnSetNotification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:visibility="gone"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            android:backgroundTint="@color/Button"
             android:text="Programmer une notification"
             android:contentDescription="Bouton pour programmer une notification quotidienne" />
+
+
     </LinearLayout>
 </ScrollView>

@@ -148,6 +148,7 @@ class DatabaseHelper(appContext: Context) :
         )
         val isValid = cursor.count > 0
         cursor.close()
+        Log.d("fonction isValid", "isUserValid confirmé")
         return isValid
     }
 
